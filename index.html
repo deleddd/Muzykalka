@@ -1,0 +1,1272 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Музыкалка — тренировка</title>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#3d0b10;--bg2:#1e0507;--card:rgba(255,255,255,.06);--card2:rgba(255,255,255,.1);--line:rgba(255,255,255,.12);
+  --txt:#fff;--mut:rgba(255,255,255,.6);--gold:#f0b44c;--ok:#34c77b;--bad:#ef4b52;--r:16px}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{min-height:100%}
+body{font-family:Inter,system-ui,sans-serif;color:var(--txt);
+  background:radial-gradient(120% 70% at 50% -10%,#7d1a23 0%,var(--bg) 50%,var(--bg2) 100%) fixed;
+  -webkit-font-smoothing:antialiased}
+button{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
+.bgword{position:fixed;inset:0;pointer-events:none;z-index:-1;overflow:hidden;opacity:.05;
+  font:700 24vw/0.92 Oswald,sans-serif;text-transform:uppercase;white-space:nowrap;padding-top:18vh}
+.app{max-width:520px;margin:0 auto;min-height:100vh;display:flex;flex-direction:column;
+  padding:calc(env(safe-area-inset-top) + 18px) 18px calc(env(safe-area-inset-bottom) + 110px)}
+.screen{display:none;flex-direction:column;flex:1;animation:in .25s ease}
+.screen.on{display:flex}
+@keyframes in{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.disp{font-family:Oswald,sans-serif;text-transform:uppercase;letter-spacing:.5px}
+.mut{color:var(--mut)}
+.lbl{font:600 12px Inter;letter-spacing:1.4px;text-transform:uppercase;color:var(--gold);margin:22px 0 10px}
+
+/* header */
+.nav{display:flex;align-items:center;justify-content:space-between;min-height:44px;margin-bottom:6px}
+.icon{width:44px;height:44px;border-radius:50%;background:var(--card);display:grid;place-items:center;font-size:20px}
+.nav .t{font:500 15px Oswald,'Arial Narrow',Impact,sans-serif;text-transform:uppercase;letter-spacing:1px;color:var(--mut)}
+
+/* home */
+.hero{padding:22px 0 8px}
+.hero .kick{font:600 12px Inter;letter-spacing:2px;text-transform:uppercase;color:var(--gold)}
+h1x{}.hero h1{font:700 clamp(40px,12vw,84px)/0.92 Oswald,'Arial Narrow',Impact,sans-serif;text-transform:uppercase;margin:10px 0 12px}
+.hero p{color:var(--mut);font-size:15px;line-height:1.5;max-width:380px}
+.mode{display:flex;gap:16px;align-items:center;text-align:left;width:100%;padding:18px;border-radius:20px;
+  background:var(--card);border:1px solid var(--line);margin-top:12px;transition:transform .12s,background .12s}
+.mode:active{transform:scale(.98);background:var(--card2)}
+.mode .ic{width:56px;height:56px;border-radius:16px;display:grid;place-items:center;font-size:28px;flex:none;background:rgba(240,180,76,.15)}
+.mode b{display:block;font:700 22px Oswald,'Arial Narrow',Impact,sans-serif;text-transform:uppercase;letter-spacing:.5px}
+.mode span{font-size:14px;color:var(--mut);line-height:1.4}
+.mode .go{margin-left:auto;font-size:22px;color:var(--mut)}
+.best{margin-top:18px;font-size:13px;color:var(--mut);text-align:center}
+
+/* lists */
+.list{display:grid;gap:8px}
+.item{display:flex;align-items:center;gap:14px;padding:15px 16px;border-radius:14px;background:var(--card);border:1.5px solid transparent;text-align:left;width:100%}
+.item .ck{width:24px;height:24px;border-radius:7px;border:2px solid var(--line);display:grid;place-items:center;font-size:14px;flex:none;transition:.15s}
+.item.on{border-color:rgba(240,180,76,.5)}
+.item.on .ck{background:var(--gold);border-color:var(--gold);color:var(--bg2)}
+.item .nm{flex:1;font-weight:600;font-size:15px}
+.item .ct{font-size:13px;color:var(--mut)}
+.row{display:flex;justify-content:space-between;align-items:center}
+.link{color:var(--gold);font-size:14px;font-weight:600}
+.switch{display:flex;align-items:center;justify-content:space-between;padding:15px 16px;border-radius:14px;background:var(--card);margin-top:8px;width:100%;font-weight:600;font-size:15px}
+.tog{width:46px;height:28px;border-radius:14px;background:var(--line);position:relative;transition:.2s;flex:none}
+.tog::after{content:"";position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:50%;background:#fff;transition:.2s}
+.tog.on{background:var(--gold)}.tog.on::after{left:21px}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{padding:10px 14px;border-radius:999px;background:var(--card);border:1.5px solid transparent;font-size:14px;font-weight:600}
+.chip.on{border-color:var(--gold);background:rgba(240,180,76,.14)}
+
+/* cta */
+.dock{position:fixed;left:0;right:0;bottom:0;padding:14px 18px calc(env(safe-area-inset-bottom) + 14px);
+  background:linear-gradient(transparent,var(--bg2) 35%);display:none;z-index:5}
+.dock.on{display:block}
+.dock .in{max-width:484px;margin:0 auto;display:grid;gap:8px}
+.btn{width:100%;padding:17px;border-radius:16px;background:#fff;color:var(--bg2);font:700 18px Oswald,'Arial Narrow',Impact,sans-serif;text-transform:uppercase;letter-spacing:1px;transition:transform .1s,opacity .2s}
+.btn:active{transform:scale(.98)}
+.btn:disabled{opacity:.3}
+.btn.gold{background:var(--gold)}
+.btn.ghost{background:var(--card);color:#fff}
+.btn.ok{background:var(--ok);color:#fff}.btn.bad{background:var(--bad);color:#fff}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+
+/* game */
+.hud{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+.prog{flex:1;height:6px;border-radius:3px;background:var(--line);overflow:hidden}
+.prog i{display:block;height:100%;background:var(--gold);border-radius:3px;transition:width .35s}
+.pill{font:600 13px Inter;padding:7px 11px;border-radius:999px;background:var(--card);white-space:nowrap}
+.streak{color:var(--gold)}
+.meta{display:flex;justify-content:space-between;font-size:13px;color:var(--mut);margin-bottom:10px}
+.tag{font:600 11px Inter;letter-spacing:1.4px;text-transform:uppercase;color:var(--gold)}
+.q{font:500 27px/1.2 Oswald,'Arial Narrow',Impact,sans-serif;margin:4px 0 18px}
+.q b{color:var(--gold);font-weight:500}
+.q .emo{display:block;font-size:56px;letter-spacing:8px;margin-top:14px;line-height:1.2}
+.yt{display:flex;align-items:center;gap:10px;padding:13px 14px;border-radius:14px;background:rgba(255,0,0,.14);border:1px solid rgba(255,80,80,.3);
+  color:#fff;text-decoration:none;font-weight:600;font-size:14px;margin-bottom:16px}
+.yt .pl{width:30px;height:30px;border-radius:50%;background:#f03;display:grid;place-items:center;font-size:12px;flex:none}
+.yt small{display:block;color:var(--mut);font-weight:500;font-size:12px}
+.opts{display:grid;gap:9px}
+.opt{display:flex;align-items:center;gap:12px;text-align:left;padding:14px;border-radius:14px;background:var(--card);
+  border:1.5px solid var(--line);font-weight:600;font-size:16px;line-height:1.3;transition:transform .1s,background .15s,border-color .15s;width:100%}
+.opt:not(:disabled):active{transform:scale(.98)}
+.opt .k{width:30px;height:30px;border-radius:9px;background:var(--card2);display:grid;place-items:center;font:700 13px Inter;flex:none;color:var(--mut)}
+.opt.ok{border-color:var(--ok);background:rgba(52,199,123,.16)}.opt.ok .k{background:var(--ok);color:#fff}
+.opt.bad{border-color:var(--bad);background:rgba(239,75,82,.16)}.opt.bad .k{background:var(--bad);color:#fff}
+.opt.dim{opacity:.4}
+.fb{margin-top:14px;padding:14px 16px;border-radius:14px;background:var(--card);font-size:15px;line-height:1.5;display:none}
+.fb.on{display:block;animation:in .2s}
+.fb b{display:block;font:700 17px Oswald,'Arial Narrow',Impact,sans-serif;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
+.fb.good b{color:var(--ok)}.fb.wrong b{color:var(--bad)}
+
+/* audio */
+.drop{display:flex;flex-direction:column;align-items:center;gap:6px;border:2px dashed var(--line);border-radius:20px;padding:28px 18px;text-align:center;cursor:pointer}
+.drop .ic{font-size:36px}
+.drop b{font:700 20px Oswald,'Arial Narrow',Impact,sans-serif;text-transform:uppercase}
+.drop span{color:var(--mut);font-size:14px;line-height:1.5}
+.drop.has{border-style:solid;border-color:rgba(52,199,123,.5);background:rgba(52,199,123,.07)}
+.hint{font-size:13px;color:var(--mut);line-height:1.5;margin-top:14px;padding:12px 14px;border-radius:12px;background:var(--card)}
+.stage{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:10px 0}
+.vinyl{width:min(68vw,250px);aspect-ratio:1;border-radius:50%;position:relative;display:grid;place-items:center;
+  background:repeating-radial-gradient(circle,#141414 0 2px,#0b0b0b 2px 4px);box-shadow:0 20px 60px rgba(0,0,0,.6),inset 0 0 0 6px #0a0a0a}
+.vinyl::before{content:"";position:absolute;inset:0;border-radius:50%;background:conic-gradient(from 30deg,transparent 0 40deg,rgba(255,255,255,.08) 60deg,transparent 80deg 220deg,rgba(255,255,255,.06) 240deg,transparent 260deg)}
+.vinyl .lab{width:36%;aspect-ratio:1;border-radius:50%;background:var(--gold);display:grid;place-items:center;color:var(--bg2);font-size:30px;position:relative;z-index:1}
+.vinyl.spin{animation:spin 1.8s linear infinite}
+.vinyl.spin .lab{animation:spin 1.8s linear infinite reverse}
+@keyframes spin{to{transform:rotate(360deg)}}
+.fxname{font:700 22px Oswald,'Arial Narrow',Impact,sans-serif;text-transform:uppercase;margin-top:22px;text-align:center}
+.tiny{margin-top:10px;color:var(--mut);font-size:14px;text-decoration:underline;text-underline-offset:3px}
+.ans{font:700 26px/1.2 Oswald,'Arial Narrow',Impact,sans-serif;color:var(--gold);text-align:center;margin-top:18px;min-height:32px;padding:0 10px}
+
+/* end */
+.ring{width:190px;height:190px;margin:16px auto 6px;border-radius:50%;display:grid;place-items:center;position:relative}
+.ring .v{font:700 64px Oswald,'Arial Narrow',Impact,sans-serif;line-height:1;text-align:center}
+.ring .v small{display:block;font:500 16px Inter;color:var(--mut);margin-top:6px}
+.verdict{text-align:center;font:500 20px Oswald,'Arial Narrow',Impact,sans-serif;text-transform:uppercase;margin:8px 0 4px}
+.br{display:grid;gap:10px;margin-top:6px}
+.br .r{display:grid;grid-template-columns:1fr auto;gap:6px;font-size:14px}
+.br .b{grid-column:1/-1;height:6px;border-radius:3px;background:var(--line);overflow:hidden}
+.br .b i{display:block;height:100%;background:var(--gold)}
+.miss{display:grid;gap:8px}
+.miss div{padding:13px 14px;border-radius:12px;background:var(--card);font-size:14px;line-height:1.45}
+.miss div b{display:block;color:var(--ok);margin-top:3px}
+
+.ta{width:100%;min-height:130px;padding:14px 16px;border-radius:14px;border:1.5px solid var(--line);background:var(--card);color:#fff;font:500 15px/1.5 Inter,sans-serif;resize:vertical;outline:none}
+.ta:focus{border-color:var(--gold)}
+.kq{font:700 34px/1.25 Oswald,'Arial Narrow',Impact,sans-serif;letter-spacing:2px;margin:26px 0 14px;word-break:break-word;text-transform:uppercase}
+.khint{color:var(--mut);font-size:14px;min-height:20px}
+.kans{margin-top:22px;font:700 24px/1.25 Oswald,'Arial Narrow',Impact,sans-serif;color:var(--gold);min-height:30px}
+.kans small{display:block;font:500 15px Inter,sans-serif;color:var(--mut);margin-top:6px;text-transform:none;letter-spacing:0}
+.addrow{display:flex;gap:8px}
+.addrow input{flex:1;min-width:0;padding:14px 16px;border-radius:14px;border:1.5px solid var(--line);background:var(--card);color:#fff;font:500 15px Inter,sans-serif;outline:none}
+.addrow input:focus{border-color:var(--gold)}
+.addbtn{width:52px;border-radius:14px;background:var(--gold);color:var(--bg2);font:700 26px Inter}
+.mine{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.mine b{margin-left:6px;opacity:.6;cursor:pointer}
+.reveal{margin-top:18px;text-align:center;min-height:40px;display:flex;flex-direction:column;align-items:center;gap:10px;animation:in .25s}
+.reveal img{width:120px;height:120px;border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,.5)}
+.reveal .an{font:700 24px/1.2 Oswald,'Arial Narrow',Impact,sans-serif;color:var(--gold);padding:0 10px}
+.reveal .or{font-size:15px;color:var(--mut)}.reveal .or b{color:#fff}
+.reveal .qq{font:500 18px Oswald,'Arial Narrow',Impact,sans-serif;text-transform:uppercase;color:var(--mut);letter-spacing:.5px}
+.status{margin-top:10px;font-size:14px;color:var(--mut);text-align:center;min-height:20px;padding:0 10px}
+
+.kline{font-size:15px;color:#fff;margin-top:8px;text-transform:none;letter-spacing:0;font-family:Inter,sans-serif;font-weight:500;line-height:1.5}
+.hidden{display:none!important}
+.qplay{display:flex;align-items:center;gap:12px;width:100%;padding:14px;border-radius:16px;background:rgba(240,180,76,.14);border:1.5px solid rgba(240,180,76,.5);margin-bottom:16px;font:700 17px Oswald,'Arial Narrow',Impact,sans-serif;text-transform:uppercase;letter-spacing:.5px}
+.qplay .qp{width:46px;height:46px;border-radius:50%;background:var(--gold);color:var(--bg2);display:grid;place-items:center;font-size:18px;flex:none}
+.qplay.on .qp{animation:pulse 1s ease-in-out infinite}
+@keyframes pulse{50%{transform:scale(1.08)}}
+.cbox{position:relative;width:min(100%,340px);aspect-ratio:1;margin:6px auto 12px;border-radius:18px;overflow:hidden;background:#111;box-shadow:0 20px 50px rgba(0,0,0,.5)}
+.cbox>*{position:absolute;inset:0;width:100%;height:100%}
+.cbg{background-repeat:no-repeat;transition:background-size .4s,background-position .4s}
+#cimg{object-fit:cover;transition:filter .4s}
+#ccv{image-rendering:pixelated}
+.cstat{text-align:center;color:var(--mut);font-size:14px;min-height:20px;margin-bottom:12px}
+.fb .trk{display:block;margin-top:6px;color:var(--gold);font-weight:600}
+.ibox{background:radial-gradient(circle,#f3e9dc,#d9c9b4)}
+.ibox.dark{background:#111}
+.drop.has{border-style:solid;border-color:rgba(52,199,123,.5);background:rgba(52,199,123,.07)}
+.q .sil{display:block;font-size:150px;line-height:1.2;text-align:center;margin-top:14px;padding:14px 0;border-radius:18px;background:radial-gradient(circle,#f3e9dc,#d9c9b4);color:transparent;text-shadow:0 0 0 #0c0c0c}
+.stats{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px}
+.stats span{font:600 12px Inter,sans-serif;padding:6px 10px;border-radius:999px;background:var(--card);color:var(--mut)}
+.stats span:empty{display:none}
+.tiles{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:18px}
+.tile{display:flex;flex-direction:column;align-items:flex-start;gap:4px;text-align:left;padding:16px;border-radius:20px;background:var(--card);border:1px solid var(--line);min-height:132px;transition:transform .12s,background .12s}
+.tile:active{transform:scale(.97);background:var(--card2)}
+.tile .ic{font-size:30px;margin-bottom:auto}
+.tile b{font:700 21px Oswald,'Arial Narrow',Impact,sans-serif;text-transform:uppercase;letter-spacing:.5px}
+.tile span{font-size:13px;color:var(--mut);line-height:1.35}
+.tile.wide{grid-column:1/-1;min-height:120px;background:linear-gradient(135deg,rgba(240,180,76,.22),rgba(240,180,76,.05));border-color:rgba(240,180,76,.4)}
+.tile.wide b{font-size:28px}
+.pbar{width:min(68vw,250px);height:4px;border-radius:2px;background:var(--line);margin-top:16px;overflow:hidden}
+.pbar i{display:block;height:100%;width:0;background:var(--gold)}
+.opt{min-height:56px}
+</style>
+</head>
+<body>
+<div class="bgword">Музыкалка<br>Музыкалка<br>Музыкалка<br>Музыкалка<br>Музыкалка</div>
+<div class="app">
+
+<!-- HOME -->
+<section class="screen on" id="home">
+  <div class="hero">
+    <div class="kick">Тренировка перед квизом</div>
+    <h1>Музыкалка</h1>
+    <div class="stats"><span id="stQ"></span><span id="stT"></span><span id="best"></span></div>
+  </div>
+  <div class="tiles">
+    <button class="tile wide" id="mQuiz"><div class="ic">🎤</div><b>Викторина</b><span id="qCount"></span></button>
+    <button class="tile" id="mAudio"><div class="ic">💿</div><b>Звук</b><span>Угадай трек с эффектами</span></button>
+    <button class="tile" id="mCov"><div class="ic">🖼️</div><b>Картинки</b><span>Обложки, клипы, постеры</span></button>
+    <button class="tile" id="mKar"><div class="ic">🎙️</div><b>Караоке</b><span>Зашифрованные строчки</span></button>
+    <button class="tile" id="mImg"><div class="ic">👤</div><b>Свои фото</b><span>Силуэты из твоих картинок</span></button>
+  </div>
+</section>
+
+<!-- QUIZ SETUP -->
+<section class="screen" id="qset">
+  <div class="nav"><button class="icon" data-back>‹</button><span class="t">Викторина</span><span style="width:44px"></span></div>
+  <div class="row"><div class="lbl">Раунды</div><button class="link" id="all">Выбрать все</button></div>
+  <div class="list" id="rounds"></div>
+  <div class="lbl">Настройки</div>
+  <div class="lbl">Сколько вопросов</div>
+  <div class="chips" id="qcnt"></div>
+  <button class="switch" id="shuf"><span>Перемешать вопросы</span><div class="tog on"></div></button>
+</section>
+
+<!-- AUDIO SETUP -->
+<section class="screen" id="aset">
+  <div class="nav"><button class="icon" data-back>‹</button><span class="t">Звуковой раунд</span><span style="width:44px"></span></div>
+  <p class="mut" style="font-size:14px;line-height:1.5;margin:4px 0 0">Песни подтягиваются сами через API Apple — 30-секундные превью. Нужен интернет.</p>
+  <div class="hint hidden" id="apiWarn" style="border:1px solid var(--bad);color:#fff">⚠️ В этом окне браузер блокирует внешние API, поэтому песни здесь не загрузятся. Открой файл <b>Muzykalka.html</b> в Chrome или Safari — там всё работает.</div>
+  <button class="btn ghost" id="diagBtn" style="margin-top:14px;font-size:15px;padding:13px">🔧 Проверить звук</button>
+  <div class="hint hidden" id="diag" style="font-size:14px;color:#fff;line-height:1.7"></div>
+  <div class="row"><div class="lbl">Плейлисты</div><button class="link" id="sall">Выбрать все</button></div>
+  <div class="list" id="pls"></div>
+  <div class="lbl">Эффекты · случайно из выбранных</div>
+  <div class="chips" id="sfx"></div>
+  <div class="lbl">Длина фрагмента</div>
+  <div class="chips" id="slens"></div>
+  <div class="lbl">Сколько треков</div>
+  <div class="chips" id="scnts"></div>
+  <div class="lbl">Свой трек</div>
+  <div class="addrow"><input id="addIn" placeholder="Исполнитель — Песня"><button class="addbtn" id="addBtn">+</button></div>
+  <div class="mine" id="mine"></div>
+  <div class="hint">💡 Удобнее на ноутбуке с колонкой: один ведущий, остальные угадывают. Пробел — играть, Enter — ответ.</div>
+</section>
+
+<!-- QUIZ GAME -->
+<section class="screen" id="game">
+  <div class="hud"><button class="icon" data-quit>✕</button><div class="prog"><i id="prog"></i></div><span class="pill" id="cnt"></span></div>
+  <div class="meta"><span class="tag" id="rtag"></span><span><span id="pts"></span> <span class="streak" id="stk"></span></span></div>
+  <div class="q" id="qtext"></div>
+  <button class="qplay hidden" id="qplay"><span class="qp" id="qpi">▶</span><span id="qpt">Слушать</span></button>
+  <a class="yt" id="ytl" target="_blank" rel="noopener"><span class="pl">▶</span><span><span id="ytT">Послушать на YouTube</span><small>откроется в новом окне</small></span></a>
+  <div class="opts" id="opts"></div>
+  <div class="fb" id="fb"></div>
+</section>
+
+<!-- AUDIO GAME -->
+<section class="screen" id="aud">
+  <div class="hud"><button class="icon" data-quit>✕</button><div class="prog"><i id="aprog"></i></div><span class="pill" id="acnt"></span></div>
+  <div class="meta"><span></span><span id="apts"></span></div>
+  <div class="stage">
+    <button class="vinyl" id="vinyl" aria-label="Играть"><div class="lab" id="vlab">▶</div></button>
+    <div class="fxname" id="afx"></div>
+    <div class="pbar"><i id="pb"></i></div>
+    <button class="tiny" id="aclean">Включить без эффекта</button>
+    <div class="reveal" id="srev"></div>
+    <div class="status" id="status"></div>
+  </div>
+</section>
+
+<!-- KARAOKE SETUP -->
+<section class="screen" id="kset">
+  <div class="nav"><button class="icon" data-back>‹</button><span class="t">Караоке-шифровки</span><span style="width:44px"></span></div>
+  <div class="lbl">Что шифруем</div>
+  <div class="chips" id="ksrc"></div>
+  <div class="lbl">Песни</div>
+  <div class="list" id="kpacks"></div>
+  <div class="lbl">Виды шифровок · случайно из выбранных</div>
+  <div class="chips" id="kmodes"></div>
+  <div class="lbl">Свои строчки</div>
+  <textarea id="kown" class="ta" placeholder="Каждая строчка с новой строки.&#10;Можно с ответом через «|»:&#10;строчка из песни | Песня — Исполнитель"></textarea>
+  <div class="hint hidden" id="apiWarn2" style="border:1px solid var(--bad);color:#fff">⚠️ В этом окне строчки не загрузятся — браузер блокирует внешние API. Открой файл <b>Muzykalka.html</b>, или играй в режиме «Названия песен».</div>
+  <div class="hint">💡 В режиме «Строчки из песен» тексты подтягиваются из открытой базы LRCLIB во время игры — нужен интернет. Свои строчки сохраняются только в этом браузере.</div>
+</section>
+
+<!-- KARAOKE GAME -->
+<section class="screen" id="kgame">
+  <div class="hud"><button class="icon" data-quit>✕</button><div class="prog"><i id="kprog"></i></div><span class="pill" id="kcnt"></span></div>
+  <div class="meta"><span class="tag" id="kmode"></span><span id="kpts"></span></div>
+  <div class="kq" id="kq"></div>
+  <div class="khint" id="khint"></div>
+  <div class="kans" id="kans"></div>
+</section>
+
+<!-- COVERS SETUP -->
+<section class="screen" id="cset">
+  <div class="nav"><button class="icon" data-back>‹</button><span class="t">Картинки</span><span style="width:44px"></span></div>
+  <div class="hint hidden" id="apiWarn3" style="border:1px solid var(--bad);color:#fff">⚠️ В этом окне картинки не загрузятся — браузер блокирует внешние API, работают только силуэты инструментов. Открой приложение как сайт или файл.</div>
+  <div class="lbl">Что угадываем</div>
+  <div class="chips" id="csrc"></div>
+  <div class="lbl">Как прячем · случайно из выбранных</div>
+  <div class="chips" id="cmodes"></div>
+  <div class="lbl">Сколько картинок</div>
+  <div class="chips" id="ccnts"></div>
+  <div class="hint">💡 Обложки, кадры клипов и постеры подтягиваются через API Apple. Не узнаёшь — жми «Подсказка», картинка станет понятнее.</div>
+</section>
+
+<!-- COVERS GAME -->
+<section class="screen" id="cgame">
+  <div class="hud"><button class="icon" data-quit>✕</button><div class="prog"><i id="cprog"></i></div><span class="pill" id="ccnt"></span></div>
+  <div class="meta"><span class="tag" id="cmode"></span><span id="cpts"></span></div>
+  <div class="cbox" id="cbox"><canvas id="ccv" width="320" height="320"></canvas><div class="cbg" id="cbg"></div><img id="cimg" alt=""></div>
+  <div class="cstat" id="cstat"></div>
+  <div class="opts" id="copts"></div>
+</section>
+
+<!-- IMAGES SETUP -->
+<section class="screen" id="iset">
+  <div class="nav"><button class="icon" data-back>‹</button><span class="t">Силуэты и кадры</span><span style="width:44px"></span></div>
+  <label class="drop" id="idrop" for="ifiles"><div class="ic">📸</div><b id="idropT">Загрузить картинки</b><span id="idropS">Фото исполнителей, скриншоты клипов, обложки.<br>Ответом будет название файла.</span></label>
+  <input type="file" id="ifiles" accept="image/*" multiple hidden>
+  <div class="lbl">Как прячем · случайно из выбранных</div>
+  <div class="chips" id="imodes"></div>
+  <div class="hint">💡 <b>Силуэт</b> лучше всего получается из PNG без фона: на iPhone зажми человека на фото → «Скопировать» / «Поделиться» — фон уберётся сам. С обычным фото страница попробует убрать однотонный фон по краям.<br><br>Назови файлы ответом, например «Freddie Mercury.png» или «Thriller — клип.jpg». Картинки никуда не загружаются.</div>
+</section>
+
+<!-- IMAGES GAME -->
+<section class="screen" id="igame">
+  <div class="hud"><button class="icon" data-quit>✕</button><div class="prog"><i id="iprog"></i></div><span class="pill" id="icnt"></span></div>
+  <div class="meta"><span class="tag" id="imode"></span><span id="ipts"></span></div>
+  <div class="cbox ibox" id="ibox"><canvas id="icv" width="640" height="640"></canvas></div>
+  <div class="ans" id="ians" style="text-align:center"></div>
+</section>
+
+<!-- END -->
+<section class="screen" id="end">
+  <div class="ring" id="ring"><div class="v" id="final"></div></div>
+  <div class="verdict" id="verdict"></div>
+  <div class="best" id="endBest" style="margin-top:2px"></div>
+  <div id="brWrap"><div class="lbl">По раундам</div><div class="br" id="br"></div></div>
+  <div id="missWrap"><div class="lbl">Ошибки</div><div class="miss" id="miss"></div></div>
+</section>
+
+</div>
+<div class="dock" id="dock"><div class="in" id="dockIn"></div></div>
+
+<script>
+const R = {
+  covers:"Каверы: чей оригинал?", uaby:"Украина и Беларусь", intl:"Зарубежные хиты", years:"Годы и эпохи", emoji:"Угадай по эмодзи", facts:"Факты и рекорды"
+};
+// [раунд, вопрос, варианты, верный, пояснение, запрос для YouTube (необязательно)]
+const Q = [
+ // covers
+ ["covers","Кавер: <b>Johnny Cash — Hurt</b> (2002). Кто автор оригинала?",["Nine Inch Nails","Depeche Mode","Radiohead","The Cure"],0,"Оригинал — Nine Inch Nails (1994). Трент Резнор говорил, что после кавера Кэша песня «больше не его».","Johnny Cash Hurt"],
+ ["covers","Кавер: <b>Whitney Houston — I Will Always Love You</b>. Кто спел первым?",["Dolly Parton","Barbra Streisand","Tina Turner","Cher"],0,"Долли Партон написала и записала её в 1974-м.","Whitney Houston I Will Always Love You"],
+ ["covers","Кавер: <b>Soft Cell — Tainted Love</b> (1981). Чей оригинал?",["Gloria Jones","Diana Ross","Gloria Gaynor","Dusty Springfield"],0,"Глория Джонс, 1964 — северный соул.","Soft Cell Tainted Love"],
+ ["covers","Кавер: <b>Gary Jules — Mad World</b>. Чей оригинал?",["Tears for Fears","Duran Duran","Depeche Mode","Simple Minds"],0,"Tears for Fears, 1982. Медленный кавер прославил фильм «Донни Дарко».","Gary Jules Mad World"],
+ ["covers","Кавер: <b>Jeff Buckley — Hallelujah</b>. Кто автор?",["Leonard Cohen","Bob Dylan","Tom Waits","Nick Cave"],0,"Леонард Коэн, 1984.","Jeff Buckley Hallelujah"],
+ ["covers","Кавер: <b>Nirvana — The Man Who Sold the World</b> (MTV Unplugged). Чей оригинал?",["David Bowie","Lou Reed","Iggy Pop","The Velvet Underground"],0,"Дэвид Боуи, 1970.","Nirvana The Man Who Sold the World Unplugged"],
+ ["covers","Кавер: <b>Sinéad O'Connor — Nothing Compares 2 U</b>. Кто автор?",["Prince","George Michael","Stevie Wonder","Lionel Richie"],0,"Написал Принс; первой песню записала его сайд-группа The Family (1985).","Sinead O'Connor Nothing Compares 2 U"],
+ ["covers","Кавер: <b>Amy Winehouse & Mark Ronson — Valerie</b>. Чей оригинал?",["The Zutons","Arctic Monkeys","The Kooks","Kaiser Chiefs"],0,"The Zutons, 2006.","Mark Ronson Amy Winehouse Valerie"],
+ ["covers","Кавер: <b>Jimi Hendrix — All Along the Watchtower</b>. Кто автор?",["Bob Dylan","Neil Young","The Rolling Stones","The Doors"],0,"Боб Дилан, 1967. Сам Дилан потом стал играть её в аранжировке Хендрикса.","Jimi Hendrix All Along the Watchtower"],
+ ["covers","Кавер: <b>Aretha Franklin — Respect</b>. Кто спел первым?",["Otis Redding","Ray Charles","Sam Cooke","James Brown"],0,"Отис Реддинг, 1965.","Aretha Franklin Respect"],
+ ["covers","Кавер: <b>Marilyn Manson — Sweet Dreams</b>. Чей оригинал?",["Eurythmics","Yazoo","Pet Shop Boys","Tears for Fears"],0,"Eurythmics, 1983.","Marilyn Manson Sweet Dreams"],
+ ["covers","Кавер: <b>Natalie Imbruglia — Torn</b>. Чей оригинал?",["Ednaswap","Alanis Morissette","The Cranberries","No Doubt"],0,"Малоизвестная группа Ednaswap — кавер стал гораздо популярнее.","Natalie Imbruglia Torn"],
+ ["covers","Кавер: <b>Cyndi Lauper — Girls Just Want to Have Fun</b>. Кто автор оригинала?",["Robert Hazard","Bruce Springsteen","Billy Joel","Madonna"],0,"Роберт Хазард, 1979 — Лопер переделала текст под женский взгляд.","Cyndi Lauper Girls Just Want to Have Fun"],
+ ["covers","Кавер: <b>Alien Ant Farm — Smooth Criminal</b>. Чей оригинал?",["Michael Jackson","Prince","Janet Jackson","Bobby Brown"],0,"Майкл Джексон, 1987.","Alien Ant Farm Smooth Criminal"],
+ ["covers","Кавер: <b>Disturbed — The Sound of Silence</b>. Чей оригинал?",["Simon & Garfunkel","The Beatles","Bob Dylan","The Byrds"],0,"Simon & Garfunkel, 1964.","Disturbed The Sound of Silence"],
+ ["covers","Кавер: <b>UB40 — Red Red Wine</b>. Кто автор?",["Neil Diamond","Bob Marley","Elvis Presley","Johnny Cash"],0,"Нил Даймонд, 1967 — регги-версия UB40 стала хитом №1.","UB40 Red Red Wine"],
+ // uaby
+ ["uaby","С какой песней Kalush Orchestra выиграли Евровидение-2022?",["Stefania","Шум","1944","Плакала"],0,"«Stefania» — посвящение маме фронтмена Олега Псюка.","Kalush Orchestra Stefania"],
+ ["uaby","С какой песней Джамала выиграла Евровидение-2016?",["1944","Crimea","Shum","Wild Dances"],0,"«1944» — о депортации крымских татар.","Jamala 1944"],
+ ["uaby","Кто фронтмен «Океан Ельзи»?",["Святослав Вакарчук","Олег Скрипка","Андрей Кузьменко","Тарас Тополя"],0,"Группа из Львова, основана в 1994. Скрипка — «ВВ», Кузьменко — «Скрябін», Тополя — «Антитіла».","Океан Ельзи"],
+ ["uaby","В каком году Go_A выступили на Евровидении с песней «Шум»?",["2019","2020","2021","2022"],2,"2021, Роттердам — 5-е место (в 2020-м конкурс отменили).","Go_A Shum"],
+ ["uaby","Песня «Ляписа Трубецкого» «Воины света» стала неофициальным гимном…",["Евромайдана","Евровидения","Олимпиады","Чемпионата Европы"],0,"Гимн Майдана 2013–2014. Позже вышла украинская версия в переводе Сергея Жадана.","Ляпис Трубецкой Воины света"],
+ ["uaby","Белорусская группа Naviband с 2020 года живёт в…",["Вильнюсе","Варшаве","Киеве","Праге"],1,"В Варшаве — после протестов в Беларуси.","Naviband"],
+ ["uaby","На каком языке Naviband спели на Евровидении-2017?",["Английском","Белорусском","Украинском","Польском"],1,"«Гісторыя майго жыцця» — первая песня на белорусском в истории конкурса.","Naviband Historyja majho žyccia"],
+ ["uaby","С кем «Антитіла» записали «2step»?",["Ed Sheeran","Coldplay","Imagine Dragons","Sting"],0,"Эд Ширан, 2022. Фронтмен Тарас Тополя тогда служил в теробороне.","Ed Sheeran Antytila 2step"],
+ ["uaby","Какое место заняли Jerry Heil и alyona alyona на Евровидении-2024?",["1","3","6","10"],1,"3-е место с «Teresa & Maria».","Jerry Heil alyona alyona Teresa Maria"],
+ ["uaby","С какой песней Руслана выиграла Евровидение-2004?",["Wild Dances","Show Me Your Love","Dancing Lasha Tumbai","Shady Lady"],0,"«Дикі танці» — первая победа Украины.","Ruslana Wild Dances"],
+ ["uaby","Какое место заняла Верка Сердючка на Евровидении-2007?",["1","2","5","Не прошла в финал"],1,"2-е место с «Dancing Lasha Tumbai».","Verka Serduchka Dancing Lasha Tumbai"],
+ ["uaby","Как DakhaBrakha сами называют свой стиль?",["Этно-хаос","Фолк-панк","Пост-фолк","Нео-соул"],0,"Квартет из Киева, родом из театра «ДАХ».","DakhaBrakha"],
+ ["uaby","Главный хит KAZKA 2018 года?",["Плакала","Шум","Мало мені","Обійми"],0,"«Плакала» — сотни миллионов просмотров на YouTube. «Обійми» — Океан Ельзи.","KAZKA Плакала"],
+ ["uaby","Кто вокалистка The Hardkiss?",["Юлия Санина","Тина Кароль","Jerry Heil","Ната Жижченко"],0,"Ната Жижченко — это ONUKA.","The Hardkiss"],
+ ["uaby","Кто был фронтменом группы «Скрябін»?",["Андрей Кузьменко (Кузьма)","Олег Скрипка","Святослав Вакарчук","Сергей Михалок"],0,"Кузьма погиб в автокатастрофе в 2015 году.","Скрябін"],
+ ["uaby","Из какого города группа Tvorchi (Евровидение-2023)?",["Львов","Тернополь","Харьков","Одесса"],1,"Тернополь; на конкурсе — «Heart of Steel», 6-е место.","Tvorchi Heart of Steel"],
+ // intl
+ ["intl","Настоящее имя The Weeknd?",["Абель Тесфайе","Обри Грэм","Кельвин Харрис","Остин Пост"],0,"Abel Tesfaye — канадец эфиопского происхождения. Обри Грэм — это Drake, Остин Пост — Post Malone."],
+ ["intl","Где родился Фредди Меркьюри?",["Индия","Занзибар","Египет","Лондон"],1,"На острове Занзибар (сейчас Танзания), детство провёл в Индии."],
+ ["intl","Какая группа выпустила альбом «The Dark Side of the Moon» (1973)?",["Led Zeppelin","The Doors","Pink Floyd","Deep Purple"],2,"Pink Floyd — один из самых продаваемых альбомов в истории."],
+ ["intl","С какой страны родом Рианна?",["Ямайка","Барбадос","Тринидад и Тобаго","Багамы"],1,"Rihanna — с Барбадоса, там её объявили национальным героем."],
+ ["intl","Кто брат и продюсер Билли Айлиш?",["Финнеас","Джек Антонофф","Марк Ронсон","Бенни Бланко"],0,"Finneas O'Connell пишет и продюсирует почти все её треки."],
+ ["intl","С какой песней ABBA выиграли Евровидение-1974?",["Mamma Mia","Dancing Queen","Waterloo","SOS"],2,"«Waterloo» — с неё начался мировой успех группы."],
+ ["intl","Самый продаваемый альбом Майкла Джексона?",["Bad","Thriller","Dangerous","Off the Wall"],1,"«Thriller» (1982) — самый продаваемый альбом в истории."],
+ ["intl","Daft Punk — дуэт из какой страны?",["Бельгия","Германия","Франция","Канада"],2,"Французский дуэт, распался в 2021 году."],
+ ["intl","Как назывался рекордный тур Тейлор Свифт 2023–2024?",["Reputation Tour","The Eras Tour","Lover Fest","1989 World Tour"],1,"The Eras Tour — самый кассовый тур в истории."],
+ ["intl","Что означают названия альбомов Адель «19», «21», «25», «30»?",["Номера студий","Её возраст","Число треков","Годы выпуска"],1,"Возраст, в котором она писала эти альбомы."],
+ ["intl","Кто исполнил «Despacito»?",["J Balvin и Bad Bunny","Luis Fonsi и Daddy Yankee","Enrique Iglesias и Pitbull","Shakira и Maluma"],1,"Luis Fonsi feat. Daddy Yankee (2017)."],
+ ["intl","Какой трек The Weeknd долго держит рекорд как самый прослушиваемый на Spotify?",["Starboy","Save Your Tears","Blinding Lights","Die For You"],2,"«Blinding Lights» (2019) — первый трек, перешагнувший 4 млрд прослушиваний на Spotify."],
+ // years
+ ["years","В каком году вышла «Smells Like Teen Spirit» (Nirvana)?",["1989","1991","1993","1995"],1,"1991, альбом «Nevermind»."],
+ ["years","В каком году распались The Beatles?",["1966","1968","1970","1973"],2,"Официально — 1970."],
+ ["years","Каким клипом открылся MTV в 1981 году?",["Thriller","Video Killed the Radio Star","Take On Me","Billie Jean"],1,"The Buggles — символично."],
+ ["years","В каком году вышел «Gangnam Style»?",["2010","2012","2014","2016"],1,"2012 — первое видео на YouTube с 1 млрд просмотров."],
+ ["years","В каком году Queen выступили на Live Aid?",["1981","1985","1989","1991"],1,"13 июля 1985, «Уэмбли» — одно из лучших живых выступлений в истории."],
+ ["years","В каком году во Львове основали «Океан Ельзи»?",["1990","1994","1998","2001"],1,"1994."],
+ // emoji
+ ["emoji","Угадай песню <span class='emo'>💜🌧️</span>",["Purple Rain","November Rain","Raindrops","Umbrella"],0,"Prince, 1984."],
+ ["emoji","Угадай песню <span class='emo'>🧊🧊👶</span>",["Ice Ice Baby","Baby One More Time","Cold as Ice","Frozen"],0,"Vanilla Ice, 1990."],
+ ["emoji","Угадай песню <span class='emo'>👁️🐯</span>",["Tiger Feet","Eye of the Tiger","Roar","Wildest Dreams"],1,"Survivor, саундтрек «Рокки 3»."],
+ ["emoji","Угадай песню <span class='emo'>🏨🌴</span>",["Hotel California","Heartbreak Hotel","California Gurls","Paradise City"],0,"Eagles, 1976."],
+ ["emoji","Угадай песню <span class='emo'>☂️</span>",["Purple Rain","Umbrella","Set Fire to the Rain","Singin' in the Rain"],1,"Rihanna feat. Jay-Z, 2007."],
+ ["emoji","Угадай песню <span class='emo'>🔥🌧️</span>",["Set Fire to the Rain","Firework","Girl on Fire","Burn"],0,"Adele, 2011."],
+ ["emoji","Угадай песню <span class='emo'>💃👑</span>",["Dancing Queen","Dancing in the Dark","Royals","Queen of Hearts"],0,"ABBA, 1976."],
+ // facts
+ ["facts","Сколько клавиш у стандартного фортепиано?",["76","82","88","96"],2,"52 белые и 36 чёрных."],
+ ["facts","На чём играл Ринго Старр в The Beatles?",["Бас-гитара","Ударные","Клавишные","Ритм-гитара"],1,"Барабанщик; на басу — Пол Маккартни."],
+ ["facts","Кто НЕ входит в «Клуб 27»?",["Курт Кобейн","Эми Уайнхаус","Джими Хендрикс","Фредди Меркьюри"],3,"Меркьюри умер в 45. Остальные — в 27."],
+ ["facts","Кто написал «Bohemian Rhapsody»?",["Брайан Мэй","Фредди Меркьюри","Роджер Тейлор","Вся группа вместе"],1,"Песня целиком авторства Меркьюри."],
+ ["facts","Какая группа из Швеции (кроме ABBA)?",["a-ha","Roxette","Scorpions","Modern Talking"],1,"a-ha — Норвегия, Scorpions и Modern Talking — Германия."],
+ ["facts","Настоящее имя Lady Gaga?",["Стефани Джерманотта","Робин Фенти","Кэтрин Хадсон","Александра Шиптон"],0,"Stefani Germanotta. Робин Фенти — Рианна, Кэтрин Хадсон — Кэти Перри."],
+ ["facts","У кого больше всех побед на «Грэмми» за всю историю?",["Тейлор Свифт","Бейонсе","Адель","Квинси Джонс"],1,"У Бейонсе больше 30 статуэток — абсолютный рекорд."],
+ ["facts","Из какого города Rammstein?",["Гамбург","Мюнхен","Берлин","Кёльн"],2,"Основаны в Берлине в 1994."],
+ ["facts","Из какого фильма трек Эминема «Lose Yourself»?",["8 миля","Голодные игры","Форсаж","Отряд самоубийц"],0,"«8 миля» (2002) — первый рэп-трек с «Оскаром»."],
+ ["facts","Sia — из какой страны?",["Новая Зеландия","Ирландия","Австралия","Канада"],2,"Из Аделаиды, Австралия."],
+ ["facts","Кто исполнил «My Heart Will Go On» из «Титаника»?",["Уитни Хьюстон","Мэрайя Кэри","Селин Дион","Шанайя Твейн"],2,"Céline Dion, 1997."]
+];
+
+Q.push(...[["trans", "Как в оригинале называется песня «Лестница в небо»?", ["Stairway to Heaven", "Highway to Hell", "Knockin' on Heaven's Door", "Heaven Is a Place on Earth"], 0, "Led Zeppelin, 1971.", "Led Zeppelin Stairway to Heaven"],
+["trans", "Как в оригинале называется песня «Добро пожаловать в джунгли»?", ["Welcome to the Jungle", "Jungle Boogie", "Welcome to the Black Parade", "Jungle Love"], 0, "Guns N' Roses, 1987."],
+["trans", "Как в оригинале называется песня «Дым над водой»?", ["Smoke on the Water", "Fire and Water", "Smoke Gets in Your Eyes", "Black Water"], 0, "Deep Purple, 1972."],
+["trans", "Как в оригинале называется песня «Ещё один кирпич в стене»?", ["Another Brick in the Wall", "Another One Bites the Dust", "Brick by Brick", "The Wall of Sound"], 0, "Pink Floyd, 1979."],
+["trans", "Как в оригинале называется песня «Плохой романс»?", ["Bad Romance", "Bad Blood", "Bad Guy", "Dangerous Woman"], 0, "Lady Gaga, 2009."],
+["trans", "Как в оригинале называется песня «Ослепляющие огни»?", ["Blinding Lights", "City Lights", "Bright Lights", "Lights Out"], 0, "The Weeknd, 2019."],
+["trans", "Как в оригинале называется песня «Шоссе в ад»?", ["Highway to Hell", "Road to Nowhere", "Hell's Bells", "Born to Be Wild"], 0, "AC/DC, 1979."],
+["trans", "Как в оригинале называется песня «Ветер перемен»?", ["Wind of Change", "Winds of Winter", "Changes", "Blowin' in the Wind"], 0, "Scorpions, 1990."],
+["trans", "Как в оригинале называется песня «Мы — чемпионы»?", ["We Are the Champions", "We Will Rock You", "We Are Young", "Champions League"], 0, "Queen, 1977."],
+["trans", "Как в оригинале называется песня «Сладкое дитя моё»?", ["Sweet Child O' Mine", "Sweet Dreams", "Child in Time", "Sugar Baby"], 0, "Guns N' Roses, 1987."],
+["trans", "Как в оригинале называется песня «Ничто иное не важно»?", ["Nothing Else Matters", "Nothing Compares 2 U", "Whatever", "It Doesn't Matter"], 0, "Metallica, 1991."],
+["trans", "Как в оригинале называется песня «Без ума от любви»?", ["Crazy in Love", "Crazy Little Thing Called Love", "Mad About You", "Love on Top"], 0, "Beyoncé feat. Jay-Z, 2003."],
+["trans", "Как в оригинале называется песня «Форма тебя»?", ["Shape of You", "Shape of My Heart", "Thinking Out Loud", "Body Talk"], 0, "Ed Sheeran, 2017."],
+["trans", "Как в оригинале называется песня «Танцующая королева»?", ["Dancing Queen", "Dancing in the Dark", "Queen of the Night", "Dance Monkey"], 0, "ABBA, 1976."],
+["trans", "Как в оригинале называется песня «Как катящийся камень»?", ["Like a Rolling Stone", "Rolling in the Deep", "Like a Stone", "Rock and a Hard Place"], 0, "Боб Дилан, 1965."],
+["trans", "Как в оригинале называется песня «Дом восходящего солнца»?", ["The House of the Rising Sun", "Here Comes the Sun", "House of Pain", "Sunrise Avenue"], 0, "The Animals, 1964."],
+["trans", "Как в оригинале называется песня «Пусть будет так»?", ["Let It Be", "Let It Go", "Let Me Be", "So Be It"], 0, "The Beatles, 1970."],
+["trans", "Как в оригинале называется песня «Жёлтая подводная лодка»?", ["Yellow Submarine", "Yellow", "Octopus's Garden", "Yellow River"], 0, "The Beatles, 1966."],
+["trans", "Как в оригинале называется песня «Мистер Голубое небо»?", ["Mr. Blue Sky", "Blue Monday", "Mr. Brightside", "Sky Full of Stars"], 0, "Electric Light Orchestra, 1977."],
+["trans", "Как в оригинале называется песня «Я выживу»?", ["I Will Survive", "Survivor", "Stayin' Alive", "I'm Still Standing"], 0, "Глория Гейнор, 1978."],
+["trans", "Как в оригинале называется песня «Девушка из материального мира»?", ["Material Girl", "Material World", "Girls Just Want to Have Fun", "Like a Virgin"], 0, "Мадонна, 1985."],
+["trans", "Как в оригинале называется песня «Всё, что тебе нужно — любовь»?", ["All You Need Is Love", "Love Is All Around", "Need You Now", "Love Me Do"], 0, "The Beatles, 1967."],
+["trans", "Как в оригинале называется песня «Скажи моё имя»?", ["Say My Name", "Say Something", "My Name Is", "Call Me Maybe"], 0, "Destiny's Child, 1999."],
+["trans", "Как в оригинале называется песня «Не оглядывайся во гневе»?", ["Don't Look Back in Anger", "Don't Stop Me Now", "Angry", "Look Back at It"], 0, "Oasis, 1996."],
+["trans", "Как в оригинале называется песня «Отель разбитых сердец»?", ["Heartbreak Hotel", "Hotel California", "Heartbreaker", "Broken Heart Hotel"], 0, "Элвис Пресли, 1956."],
+["trans", "Как в оригинале называется песня «Ты меня потрясла всю ночь напролёт»?", ["You Shook Me All Night Long", "All Night Long", "Shake It Off", "Rock You Like a Hurricane"], 0, "AC/DC, 1980."],
+["trans", "Как в оригинале называется песня «Улицы Филадельфии»?", ["Streets of Philadelphia", "Philadelphia Freedom", "Streets of London", "City of Brotherly Love"], 0, "Брюс Спрингстин, «Оскар» за фильм «Филадельфия»."],
+["trans", "Как в оригинале называется песня «Я хочу вырваться на свободу»?", ["I Want to Break Free", "Break Free", "Free as a Bird", "I Want It All"], 0, "Queen, 1984."],
+["trans", "Как в оригинале называется песня «Поцелуй от розы»?", ["Kiss from a Rose", "Roses", "Every Rose Has Its Thorn", "Kiss Me"], 0, "Seal, 1994."],
+["albums", "Обложка: призма раскладывает луч света в радугу. Чей альбом?", ["Pink Floyd", "Led Zeppelin", "Queen", "Genesis"], 0, "«The Dark Side of the Moon», 1973."],
+["albums", "Обложка: младенец плывёт под водой за долларом на крючке. Чей альбом?", ["Nirvana", "Pearl Jam", "Foo Fighters", "Soundgarden"], 0, "«Nevermind», 1991."],
+["albums", "Обложка: четверо переходят дорогу по зебре.", ["The Beatles", "The Rolling Stones", "The Who", "The Kinks"], 0, "«Abbey Road», 1969."],
+["albums", "Обложка: банан работы Энди Уорхола.", ["The Velvet Underground & Nico", "The Doors", "Talking Heads", "Blondie"], 0, "Дебютный альбом 1967 года."],
+["albums", "Обложка: молния-грим через всё лицо.", ["David Bowie", "Kiss", "Queen", "Elton John"], 0, "«Aladdin Sane», 1973."],
+["albums", "Обложка: белые волнистые линии на чёрном фоне (сигнал пульсара).", ["Joy Division", "The Cure", "New Order", "Depeche Mode"], 0, "«Unknown Pleasures», 1979."],
+["albums", "Ярко-салатовая обложка с надписью «brat» — чей альбом 2024 года?", ["Charli XCX", "Billie Eilish", "Dua Lipa", "Lorde"], 0, "Цвет «brat green» стал мемом лета-2024."],
+["albums", "Логотип в виде губ и высунутого языка — чей?", ["The Rolling Stones", "Kiss", "Aerosmith", "Red Hot Chili Peppers"], 0, "Придуман в 1971 году."],
+["albums", "Чей альбом «Rumours» (1977)?", ["Fleetwood Mac", "Eagles", "The Doobie Brothers", "Steely Dan"], 0, "Один из самых продаваемых альбомов в истории."],
+["albums", "Чей альбом «Back in Black»?", ["AC/DC", "Metallica", "Black Sabbath", "Def Leppard"], 0, "1980, посвящён памяти вокалиста Бона Скотта."],
+["albums", "Чей альбом «Hybrid Theory»?", ["Linkin Park", "Limp Bizkit", "Korn", "Papa Roach"], 0, "Дебют 2000 года."],
+["albums", "Чей альбом «Random Access Memories»?", ["Daft Punk", "Justice", "Air", "Gorillaz"], 0, "2013, «Альбом года» на «Грэмми»."],
+["albums", "Чей альбом «AM» (2013)?", ["Arctic Monkeys", "The Strokes", "Kings of Leon", "The Killers"], 0, "Там «Do I Wanna Know?» и «R U Mine?»."],
+["albums", "Чей альбом «Lemonade»?", ["Beyoncé", "Rihanna", "Adele", "Alicia Keys"], 0, "Визуальный альбом 2016 года."],
+["albums", "Чей альбом «Future Nostalgia»?", ["Dua Lipa", "Doja Cat", "Ariana Grande", "Lady Gaga"], 0, "2020: «Don't Start Now», «Levitating»."],
+["albums", "Чей альбом «Appetite for Destruction»?", ["Guns N' Roses", "Mötley Crüe", "Bon Jovi", "Aerosmith"], 0, "Самый продаваемый дебют в истории США."],
+["albums", "Чей альбом «OK Computer»?", ["Radiohead", "Muse", "Coldplay", "Blur"], 0, "1997."],
+["albums", "Чей альбом «A Night at the Opera» с «Bohemian Rhapsody»?", ["Queen", "Electric Light Orchestra", "Genesis", "Yes"], 0, "1975."],
+["albums", "Чей альбом «1989»?", ["Taylor Swift", "Katy Perry", "Lorde", "Selena Gomez"], 0, "Назван по году её рождения."],
+["albums", "Чей альбом «Born in the U.S.A.»?", ["Bruce Springsteen", "Bob Dylan", "Tom Petty", "Bon Jovi"], 0, "1984."],
+["names", "Настоящее имя Элтона Джона?", ["Реджинальд Дуайт", "Ричард Старки", "Гордон Самнер", "Пол Хьюсон"], 0, "Ричард Старки — Ринго Старр, Самнер — Стинг, Хьюсон — Боно."],
+["names", "Настоящее имя Фредди Меркьюри?", ["Фаррух Булсара", "Фредерик Мёрфи", "Фрэнк Меркьюри", "Фарид Бадави"], 0, "Родился на Занзибаре."],
+["names", "Настоящее имя Бруно Марса?", ["Питер Джин Эрнандес", "Бруно Маринелли", "Педро Марсиано", "Брайан Мартинес"], 0, "Прозвище Bruno дал отец в детстве."],
+["names", "Настоящее имя Эминема?", ["Маршалл Мэтерс", "Мартин Мэттьюс", "Майкл Мейерс", "Маркус Миллер"], 0, "M&M → Eminem."],
+["names", "Настоящее имя Стинга?", ["Гордон Самнер", "Стивен Тайлер", "Пол Хьюсон", "Дэвид Джонс"], 0, "Прозвище — за чёрно-жёлтый свитер «как у осы»."],
+["names", "Настоящее имя Боно (U2)?", ["Пол Хьюсон", "Гордон Самнер", "Дэвид Эванс", "Адам Клейтон"], 0, "Дэвид Эванс — гитарист The Edge."],
+["names", "Настоящее имя Snoop Dogg?", ["Кэлвин Бродус", "Андре Янг", "Шон Картер", "Кертис Джексон"], 0, "Андре Янг — Dr. Dre, Картер — Jay-Z, Джексон — 50 Cent."],
+["names", "Настоящее имя Jay-Z?", ["Шон Картер", "Кертис Джексон", "Андре Янг", "Надир Джонс"], 0, "Муж Бейонсе."],
+["names", "Настоящее имя Ланы Дель Рей?", ["Элизабет Грант", "Элла Йелич-О'Коннор", "Алиша Мур", "Стефани Джерманотта"], 0, "Элла — это Lorde, Алиша Мур — Pink."],
+["names", "Настоящее имя Pink?", ["Алиша Мур", "Элизабет Грант", "Кэтрин Хадсон", "Робин Фенти"], 0, ""],
+["names", "Настоящее имя Lorde?", ["Элла Йелич-О'Коннор", "Элизабет Грант", "Сия Ферлер", "Холзи Франжипане"], 0, "Новая Зеландия."],
+["names", "Настоящее имя Слэша (Guns N' Roses)?", ["Сол Хадсон", "Сол Гудман", "Стив Хармон", "Сэм Хокинс"], 0, ""],
+["names", "Настоящее имя Дэвида Боуи?", ["Дэвид Джонс", "Дэвид Смит", "Дэвид Браун", "Дэвид Тейлор"], 0, "Сменил имя, чтобы не путали с Дэви Джонсом из The Monkees."],
+["names", "Настоящее имя Боба Дилана?", ["Роберт Циммерман", "Роберт Аллен", "Роберт Смит", "Роберт Плант"], 0, "Нобелевская премия по литературе, 2016."],
+["names", "Настоящее имя Тины Тёрнер?", ["Анна Мэй Буллок", "Анна Мэй Уилсон", "Тина Грант", "Тина Мэй Джонс"], 0, ""],
+["names", "Настоящее имя Lil Nas X?", ["Монтеро Хилл", "Монти Холл", "Нассир Джонс", "Лил Хилл"], 0, "Отсюда альбом «Montero»."],
+["names", "Настоящее имя Игги Попа?", ["Джеймс Остерберг", "Джеймс Хетфилд", "Джим Моррисон", "Джеймс Браун"], 0, ""],
+["names", "Настоящее имя Мадонны?", ["Мадонна Чикконе", "Мадонна Луиза Смит", "Мэри Чикконе", "Луиза Вероника"], 0, "Мадонна — её настоящее имя."],
+["names", "Настоящее имя Drake?", ["Обри Грэм", "Абель Тесфайе", "Остин Пост", "Онике Мараж"], 0, "Онике Мараж — Ники Минаж."],
+["film", "Из какого фильма «(I've Had) The Time of My Life»?", ["Грязные танцы", "Бриолин", "Свободные", "Танец-вспышка"], 0, "1987, «Оскар» за песню.", "Time of My Life Dirty Dancing"],
+["film", "Из какого фильма «Shallow» (Lady Gaga)?", ["Звезда родилась", "Богемская рапсодия", "Величайший шоумен", "Ла-Ла Ленд"], 0, "2018, «Оскар» за песню."],
+["film", "Из какого фильма «Skyfall» (Adele)?", ["007: Координаты «Скайфолл»", "Казино «Рояль»", "Спектр", "Не время умирать"], 0, "2012."],
+["film", "Из какого фильма «I Will Always Love You» (Уитни Хьюстон)?", ["Телохранитель", "Привидение", "Красотка", "Армагеддон"], 0, "1992."],
+["film", "Из какого фильма «I Don't Want to Miss a Thing» (Aerosmith)?", ["Армагеддон", "Титаник", "День независимости", "Скала"], 0, "1998."],
+["film", "Из какого фильма «Oh, Pretty Woman»?", ["Красотка", "Сбежавшая невеста", "Телохранитель", "Ноттинг-Хилл"], 0, "Песня Роя Орбисона 1964 года."],
+["film", "Из какого фильма «Hooked on a Feeling» с её «уга-чака»?", ["Стражи Галактики", "Дэдпул", "Мстители", "Тор: Рагнарёк"], 0, "Версия Blue Swede, 1974."],
+["film", "Из какого мультфильма «All Star» (Smash Mouth)?", ["Шрек", "Мадагаскар", "Ледниковый период", "Тачки"], 0, "Звучит в самом начале."],
+["film", "Из какого фильма «The Power of Love» (Huey Lewis)?", ["Назад в будущее", "Охотники за привидениями", "Гремлины", "Бэтмен"], 0, "1985."],
+["film", "Из какого фильма мелодия «Lux Aeterna»?", ["Реквием по мечте", "Начало", "Тёмный рыцарь", "Матрица"], 0, "Клинт Мэнселл, 2000."],
+["film", "Из какого фильма фортепианная «Comptine d'un autre été»?", ["Амели", "1+1", "Леон", "Париж, я люблю тебя"], 0, "Ян Тьерсен, 2001."],
+["film", "Из какого фильма «Born Slippy» (Underworld)?", ["На игле", "Большой куш", "Карты, деньги, два ствола", "Бойцовский клуб"], 0, "Trainspotting, 1996."],
+["film", "Из какого фильма «Bang Bang» (Нэнси Синатра)?", ["Убить Билла", "Криминальное чтиво", "Джеки Браун", "Бесславные ублюдки"], 0, "Тарантино, 2003."],
+["film", "Из какого фильма «City of Stars»?", ["Ла-Ла Ленд", "Одержимость", "Величайший шоумен", "Звезда родилась"], 0, "2016, «Оскар» за песню."],
+["film", "Из какого мультфильма «Golden» (HUNTR/X)?", ["K-pop-охотницы на демонов", "Холодное сердце 2", "Энканто", "Элементарно"], 0, "Netflix, 2025 — один из главных хитов года."],
+["film", "Из какого фильма «Don't You (Forget About Me)» (Simple Minds)?", ["Клуб «Завтрак»", "Феррис Бьюллер берёт выходной", "Вспомнить всё", "Шестнадцать свечей"], 0, "1985."],
+["film", "Из какого фильма «Unchained Melody»?", ["Привидение", "Грязные танцы", "Красотка", "Титаник"], 0, "1990, сцена с гончарным кругом."],
+["film", "Из какого фильма «Kiss from a Rose» (Seal)?", ["Бэтмен навсегда", "Бэтмен возвращается", "Красавица и чудовище", "Робин Гуд"], 0, "1995."],
+["film", "Из какого фильма «Mrs. Robinson»?", ["Выпускник", "Беспечный ездок", "Полуночный ковбой", "Бонни и Клайд"], 0, "Simon & Garfunkel, 1967."],
+["film", "Из какого фильма «Gangsta's Paradise» (Coolio)?", ["Опасные мысли", "Парни по соседству", "8 миля", "Сделка с дьяволом"], 0, "1995."],
+["film", "Из какого фильма тема «Speak Softly, Love» Нино Роты?", ["Крёстный отец", "Однажды в Америке", "Лицо со шрамом", "Славные парни"], 0, "1972."],
+["film", "Из какого фильма «Moon River»?", ["Завтрак у Тиффани", "Римские каникулы", "Касабланка", "Поющие под дождём"], 0, "Одри Хепбёрн, 1961."],
+["film", "Из какого мультфильма «Happy» (Pharrell)?", ["Гадкий я 2", "Тролли", "Рио", "Зверопой"], 0, "2013."],
+["film", "Из какого мультфильма «Can't Stop the Feeling!»?", ["Тролли", "Зверопой", "Гадкий я 3", "Миньоны"], 0, "Джастин Тимберлейк, 2016."],
+["film", "Из какого фильма «No Time to Die» Билли Айлиш?", ["Не время умирать", "007: Спектр", "Казино «Рояль»", "007: Координаты «Скайфолл»"], 0, "2021, «Оскар»."],
+["film", "Из какого фильма «Eye of the Tiger»?", ["Рокки 3", "Рокки", "Крид", "Рэмбо"], 0, "Survivor, 1982."],
+["film", "Из какого фильма «Footloose» Кенни Логгинса?", ["Свободные", "Лучший стрелок", "Грязные танцы", "Флэшданс"], 0, "1984."],
+["tv", "Чья песня «Running Up That Hill» вернулась в чарты после «Очень странных дел»?", ["Kate Bush", "Cyndi Lauper", "Annie Lennox", "Stevie Nicks"], 0, "Через 37 лет после выхода — 2022."],
+["tv", "Из какого сериала песня «Tuyo»?", ["Нарко", "Бумажный дом", "Во все тяжкие", "Элита"], 0, "Родриго Амаранте."],
+["tv", "Из какого сериала заставка «Woke Up This Morning»?", ["Клан Сопрано", "Подпольная империя", "Прослушка", "Безумцы"], 0, "Alabama 3."],
+["tv", "Из какого сериала заставка «Far from Any Road»?", ["Настоящий детектив", "Фарго", "Мост", "Острые козырьки"], 0, "The Handsome Family, 1-й сезон."],
+["tv", "Из какого сериала заставка «Superman» (Lazlo Bane)?", ["Клиника", "Друзья", "Как я встретил вашу маму", "Офис"], 0, "Scrubs."],
+["tv", "Кто поёт заставку «Теории большого взрыва»?", ["Barenaked Ladies", "The Rembrandts", "Weezer", "They Might Be Giants"], 0, ""],
+["tv", "Из какого сериала заставка «A Beautiful Mine» (RJD2)?", ["Безумцы", "Карточный домик", "Наследники", "Клан Сопрано"], 0, "Mad Men."],
+["tv", "Из какого сериала «Aloha!» с криками и барабанами?", ["Белый лотос", "Аркейн", "Сёгун", "Северные воды"], 0, "Кристобаль Тапиа де Веер."],
+["tv", "Из какого сериала заставка «How Soon Is Now?»?", ["Зачарованные", "Баффи", "Тайны Смолвиля", "Сверхъестественное"], 0, "Кавер Love Spit Love на The Smiths."],
+["tv", "Кто написал музыку к «Игре престолов»?", ["Рамин Джавади", "Ханс Циммер", "Говард Шор", "Джон Уильямс"], 0, "Ещё «Мир Дикого Запада» и «Дом Дракона»."],
+["tv", "Из какого сериала заставка «Who Are You» (The Who)?", ["C.S.I.: Место преступления", "Морская полиция", "Доктор Хаус", "Кости"], 0, ""],
+["tv", "Кто написал музыку к «Твин Пикс»?", ["Анджело Бадаламенти", "Дэнни Элфман", "Марк Сноу", "Ханс Циммер"], 0, "Постоянный соавтор Дэвида Линча."],
+["tv", "Кто написал музыку к «Эйфории»?", ["Labrinth", "Тревор Резнор", "Финнеас", "Ludwig Göransson"], 0, ""],
+["tv", "Кто написал знаменитую тему «Секретных материалов»?", ["Марк Сноу", "Дэнни Элфман", "Ханс Циммер", "Говард Шор"], 0, ""],
+["tv", "Из какого сериала заставка «I'm Always Here»?", ["Спасатели Малибу", "Полиция Майами", "Беверли-Хиллз, 90210", "Санта-Барбара"], 0, "Baywatch."],
+["tv", "Кто написал тему «Симпсонов»?", ["Дэнни Элфман", "Джон Уильямс", "Ханс Циммер", "Алан Сильвестри"], 0, "И тему «Уэнсдей» тоже."],
+["game", "Чей трек «Sweden» из Minecraft?", ["C418", "Toby Fox", "Lena Raine", "Kevin MacLeod"], 0, "Даниэль Розенфельд."],
+["game", "Какая песня стала первой музыкой из игры с премией «Грэмми»?", ["Baba Yetu", "Still Alive", "Dragonborn", "Megalovania"], 0, "Кристофер Тин, Civilization IV — 2011."],
+["game", "«Legends Never Die» — гимн чемпионата по какой игре?", ["League of Legends", "Dota 2", "Counter-Strike", "Overwatch"], 0, "Worlds 2017."],
+["game", "Из какой игры мелодия «Коробейники»?", ["Тетрис", "Pac-Man", "Space Invaders", "Arkanoid"], 0, ""],
+["game", "В какой серии игр впервые звучала «Song 2» (Blur)?", ["FIFA", "Need for Speed", "Tony Hawk's", "GTA"], 0, "FIFA 98."],
+["game", "Из какой игры «Get Low» (Lil Jon)?", ["Need for Speed: Underground", "GTA: San Andreas", "FIFA 2004", "Tony Hawk's Underground"], 0, "2003."],
+["game", "Из какой игры «I Don't Want to Set the World on Fire»?", ["Fallout 3", "BioShock", "Mafia", "L.A. Noire"], 0, "The Ink Spots."],
+["game", "Из какой игры «Far Away» (José González)?", ["Red Dead Redemption", "The Last of Us", "Life Is Strange", "Firewatch"], 0, "2010."],
+["game", "Какая польская студия сделала «Ведьмака 3» и Cyberpunk 2077?", ["CD Projekt Red", "Techland", "People Can Fly", "11 bit studios"], 0, "Варшава."],
+["game", "Кто композитор «Ведьмака 3»?", ["Марцин Пшибылович", "Миколай Строинский", "Яцек Качмарский", "Збигнев Прайснер"], 0, "Поляк, работал и над Cyberpunk 2077."],
+["game", "Какая студия сделала S.T.A.L.K.E.R.?", ["GSC Game World", "4A Games", "Frogwares", "Vostok Games"], 0, "Киев, Украина."],
+["game", "Кто композитор The Last of Us?", ["Густаво Сантаолалья", "Ханс Циммер", "Марк Мазерсбо", "Остин Винтори"], 0, "Двукратный обладатель «Оскара»."],
+["game", "Кто композитор Super Mario и Zelda?", ["Кодзи Кондо", "Нобуо Уэмацу", "Юдзо Косиро", "Митиру Ямане"], 0, ""],
+["game", "Кто композитор Final Fantasy?", ["Нобуо Уэмацу", "Кодзи Кондо", "Ёко Симомура", "Ясунори Мицуда"], 0, ""],
+["game", "Кто написал саундтрек DOOM (2016)?", ["Mick Gordon", "Trent Reznor", "Bobby Prince", "Jesper Kyd"], 0, ""],
+["game", "Из какой игры «Megalovania»?", ["Undertale", "Celeste", "Hollow Knight", "Cuphead"], 0, "Toby Fox."],
+["euro", "Кто выиграл Евровидение-2023?", ["Loreen (Швеция)", "Käärijä (Финляндия)", "Noa Kirel (Израиль)", "Tvorchi (Украина)"], 0, "«Tattoo» — её вторая победа после «Euphoria» (2012)."],
+["euro", "Кто выиграл Евровидение-2024?", ["Nemo (Швейцария)", "Baby Lasagna (Хорватия)", "Joost Klein (Нидерланды)", "Jerry Heil & alyona alyona (Украина)"], 0, "«The Code»."],
+["euro", "Кто выиграл Евровидение-2025?", ["JJ (Австрия)", "KAJ (Швеция)", "Yuval Raphael (Израиль)", "Justyna Steczkowska (Польша)"], 0, "«Wasted Love»."],
+["euro", "С какой песней Måneskin выиграли Евровидение-2021?", ["Zitti e buoni", "Beggin'", "I Wanna Be Your Slave", "Coraline"], 0, "Италия."],
+["euro", "Кто выиграл Евровидение-2019 с «Arcade»?", ["Duncan Laurence", "Mahmood", "Sergey Lazarev", "KEiiNO"], 0, "Нидерланды."],
+["euro", "Какая страна выиграла Евровидение-2018 с песней «Toy»?", ["Израиль", "Кипр", "Греция", "Мальта"], 0, "Netta."],
+["euro", "Кто выиграл Евровидение-2014 с «Rise Like a Phoenix»?", ["Кончита Вурст", "Måns Zelmerlöw", "Emmelie de Forest", "Loreen"], 0, "Австрия."],
+["euro", "С какой песней Александр Рыбак выиграл в 2009-м?", ["Fairytale", "Satellite", "Euphoria", "Only Teardrops"], 0, "Норвегия, рекорд по очкам на тот момент."],
+["euro", "Какая страна выиграла Евровидение-2006 с хард-роком Lordi?", ["Финляндия", "Швеция", "Норвегия", "Исландия"], 0, "«Hard Rock Hallelujah»."],
+["euro", "Какие страны выигрывали Евровидение больше всех — по 7 раз?", ["Ирландия и Швеция", "Великобритания и Франция", "Нидерланды и Израиль", "Норвегия и Дания"], 0, ""],
+["euro", "За какую страну выступала и победила Селин Дион в 1988-м?", ["Швейцария", "Канада", "Франция", "Бельгия"], 0, "«Ne partez pas sans moi»."],
+["euro", "Сколько раз побеждала Украина?", ["3", "1", "2", "4"], 0, "2004, 2016, 2022."],
+["euro", "Лучший результат Польши на Евровидении?", ["2-е место, Эдита Гурняк, 1994", "1-е место, 2003", "3-е место, Blanka, 2023", "5-е место, Doda, 2010"], 0, "Это был дебют Польши на конкурсе."],
+["euro", "Кто НЕ входит в «Большую пятёрку» Евровидения?", ["Нидерланды", "Италия", "Испания", "Германия"], 0, "«Большая пятёрка»: Великобритания, Франция, Германия, Италия, Испания."],
+["euro", "Кто занял 2-е место в 2023-м с «Cha Cha Cha»?", ["Käärijä", "Loreen", "Alessandra", "La Zarra"], 0, "Финляндия."],
+["euro", "С какой песней Måns Zelmerlöw выиграл в 2015-м?", ["Heroes", "Euphoria", "Tattoo", "Arcade"], 0, "Швеция."],
+["euro", "Кто выиграл Евровидение-2010 с «Satellite»?", ["Lena (Германия)", "Loreen (Швеция)", "Lordi (Финляндия)", "Netta (Израиль)"], 0, ""],
+["euro", "С какой песней Украина выступала на Евровидении-2025?", ["Bird of Pray", "Teresa & Maria", "Heart of Steel", "Shum"], 0, "Группа Ziferblat."],
+["pl", "Чей хит «Małomiasteczkowy»?", ["Dawid Podsiadło", "Ralph Kamiński", "Sanah", "Mrozu"], 0, "2018.", "Dawid Podsiadło Małomiasteczkowy"],
+["pl", "Какой группы песня «Długość dźwięku samotności»?", ["Myslovitz", "Kult", "Perfect", "Hey"], 0, "Вокал — Артур Роек."],
+["pl", "Чья песня «Kocham cię, kochanie moje»?", ["Maanam", "Lady Pank", "Republika", "Budka Suflera"], 0, "Вокалистка Кора."],
+["pl", "Чья песня «Mniej niż zero»?", ["Lady Pank", "Perfect", "Maanam", "TSA"], 0, "1983."],
+["pl", "Чья песня «Jolka, Jolka pamiętasz»?", ["Budka Suflera", "Lady Pank", "Perfect", "Kombi"], 0, "1986."],
+["pl", "Чья песня «Autobiografia»?", ["Perfect", "Kult", "Dżem", "Republika"], 0, "1981."],
+["pl", "Чей хит «Szampan»?", ["sanah", "Daria Zawiałow", "Margaret", "Viki Gabor"], 0, "2021."],
+["pl", "Фронтмен группы Kult?", ["Казик Сташевский", "Артур Роек", "Гжегож Цехович", "Збигнев Хольдыс"], 0, "Песня «Arahja»."],
+["pl", "Чей трек «Deszcz na betonie»?", ["Taco Hemingway", "Quebonafide", "Mata", "Sokół"], 0, ""],
+["pl", "Чей хит «Dziś późno pójdę spać»?", ["Kwiat Jabłoni", "Męskie Granie Orkiestra", "Dawid Podsiadło", "Sanah"], 0, "2019."],
+["pl", "В каком городе главный фестиваль польской песни?", ["Ополе", "Сопот", "Краков", "Гдыня"], 0, "Krajowy Festiwal Piosenki Polskiej."],
+["pl", "В каком городе проходит фестиваль Open'er?", ["Гдыня", "Гданьск", "Познань", "Вроцлав"], 0, ""],
+["pl", "Как раньше назывался фестиваль Pol'and'Rock?", ["Przystanek Woodstock", "Męskie Granie", "OFF Festival", "Jarocin"], 0, ""],
+["pl", "Где родился Фредерик Шопен?", ["Желязова Воля", "Варшава", "Краков", "Париж"], 0, "1810."],
+["pl", "Чья песня «Dziwny jest ten świat»?", ["Czesław Niemen", "Krzysztof Krawczyk", "Marek Grechuta", "Andrzej Zaucha"], 0, "1967."],
+["pl", "Кто представлял Польшу на Евровидении-2023 с «Solo»?", ["Blanka", "Ochman", "Sanah", "Viki Gabor"], 0, ""],
+["pl", "Кто представлял Польшу на Евровидении-2025?", ["Justyna Steczkowska", "Luna", "Blanka", "Edyta Górniak"], 0, "Песня «Gaja»."],
+["pl", "Музыку какого композитора играет герой фильма «Пианист»?", ["Шопена", "Моцарта", "Бетховена", "Листа"], 0, "Владислав Шпильман."],
+["duets", "Кто исполнил «Under Pressure»?", ["Queen и David Bowie", "Queen и Elton John", "David Bowie и Mick Jagger", "Queen и George Michael"], 0, "1981."],
+["duets", "Кто исполнил «Islands in the Stream»?", ["Kenny Rogers и Dolly Parton", "Johnny Cash и June Carter", "Dolly Parton и Willie Nelson", "Kenny Rogers и Sheena Easton"], 0, "1983."],
+["duets", "Кто исполнил «Don't Go Breaking My Heart»?", ["Elton John и Kiki Dee", "Elton John и Dua Lipa", "George Michael и Aretha Franklin", "Elton John и RuPaul"], 0, "1976."],
+["duets", "Кто исполнил «Love the Way You Lie»?", ["Eminem и Rihanna", "Eminem и Dido", "Jay-Z и Rihanna", "Eminem и Sia"], 0, "2010."],
+["duets", "Кто исполнил «Beautiful Liar»?", ["Beyoncé и Shakira", "Beyoncé и Rihanna", "Shakira и Rihanna", "Beyoncé и Lady Gaga"], 0, "2007."],
+["duets", "Кто исполнил «Dilemma»?", ["Nelly и Kelly Rowland", "Ja Rule и Ashanti", "Usher и Alicia Keys", "Nelly и Beyoncé"], 0, "2002."],
+["duets", "Кто исполнил «Die With a Smile»?", ["Lady Gaga и Bruno Mars", "Rosé и Bruno Mars", "Lady Gaga и Bradley Cooper", "Ariana Grande и The Weeknd"], 0, "2024."],
+["duets", "Кто исполнил «APT.»?", ["Rosé и Bruno Mars", "Lisa и Bruno Mars", "Jennie и The Weeknd", "Rosé и Ed Sheeran"], 0, "2024."],
+["duets", "Кто поёт припев в «Stan» Эминема?", ["Dido", "Rihanna", "Sia", "Skylar Grey"], 0, "Сэмпл её песни «Thank You»."],
+["duets", "Кто исполнил «Empire State of Mind»?", ["Jay-Z и Alicia Keys", "Kanye West и Alicia Keys", "Jay-Z и Beyoncé", "Nas и Lauryn Hill"], 0, "2009."],
+["duets", "Кто с Daft Punk в «Get Lucky»?", ["Pharrell Williams и Nile Rodgers", "The Weeknd", "Julian Casablancas", "Kanye West"], 0, "2013."],
+["duets", "Кто в ремиксе «Old Town Road» вместе с Lil Nas X?", ["Billy Ray Cyrus", "Dolly Parton", "Johnny Cash", "Keith Urban"], 0, "2019."],
+["duets", "Кто исполнил «Señorita» (2019)?", ["Shawn Mendes и Camila Cabello", "Justin Bieber и Selena Gomez", "Shawn Mendes и Dua Lipa", "Camila Cabello и Ed Sheeran"], 0, ""],
+["duets", "Кто записал «Lady Marmalade» (2001) для «Мулен Руж»?", ["Christina Aguilera, Lil' Kim, Mýa и Pink", "Destiny's Child", "Spice Girls", "Britney, Christina и Madonna"], 0, ""],
+["duets", "Кто исполнил «Ebony and Ivory»?", ["Paul McCartney и Stevie Wonder", "John Lennon и Ray Charles", "Elton John и Stevie Wonder", "Paul McCartney и Michael Jackson"], 0, "1982."],
+["duets", "Кто записал «Walk This Way» в 1986-м?", ["Run-DMC и Aerosmith", "Beastie Boys и Kiss", "Run-DMC и Queen", "LL Cool J и Bon Jovi"], 0, "Первый рэп-рок-хит."],
+["duets", "Кто исполнил «Time to Say Goodbye»?", ["Andrea Bocelli и Sarah Brightman", "Andrea Bocelli и Céline Dion", "Pavarotti и Sarah Brightman", "Josh Groban и Sarah Brightman"], 0, "1996."],
+["duets", "Кто исполнил «Uptown Funk»?", ["Mark Ronson и Bruno Mars", "Pharrell и Bruno Mars", "Mark Ronson и Amy Winehouse", "Calvin Harris и Bruno Mars"], 0, "2014."],
+["xmas", "Чья «All I Want for Christmas Is You»?", ["Mariah Carey", "Whitney Houston", "Celine Dion", "Michael Bublé"], 0, "1994, каждый декабрь снова на вершине."],
+["xmas", "Чья «Last Christmas»?", ["Wham!", "Spandau Ballet", "Duran Duran", "Culture Club"], 0, "1984, Джордж Майкл."],
+["xmas", "Чья «Jingle Bell Rock»?", ["Bobby Helms", "Elvis Presley", "Brenda Lee", "Chuck Berry"], 0, "1957."],
+["xmas", "Чья «Feliz Navidad»?", ["José Feliciano", "Ricky Martin", "Julio Iglesias", "Enrique Iglesias"], 0, "1970."],
+["xmas", "Кто спел «Happy New Year»?", ["ABBA", "Boney M.", "Bee Gees", "Modern Talking"], 0, "1980."],
+["xmas", "Кто исполнил «Driving Home for Christmas»?", ["Chris Rea", "Rod Stewart", "Phil Collins", "Sting"], 0, "1986."],
+["xmas", "Чья «Santa Tell Me»?", ["Ariana Grande", "Sabrina Carpenter", "Kelly Clarkson", "Meghan Trainor"], 0, "2014."],
+["xmas", "Кто записал «Rockin' Around the Christmas Tree» в 13 лет?", ["Brenda Lee", "Dolly Parton", "Stevie Wonder", "Michael Jackson"], 0, "1958."],
+["xmas", "Самый продаваемый сингл в истории — это…", ["White Christmas (Bing Crosby)", "Candle in the Wind", "Last Christmas", "Jingle Bells"], 0, "Больше 50 млн копий."],
+["xmas", "Чья «Fairytale of New York»?", ["The Pogues feat. Kirsty MacColl", "U2", "Oasis", "The Cranberries"], 0, "1987."],
+["xmas", "Чья «Merry Christmas Everyone»?", ["Shakin' Stevens", "Slade", "Wizzard", "Cliff Richard"], 0, "1985."],
+["xmas", "Какая колядка стала мировым хитом «Carol of the Bells»?", ["«Щедрик» Николая Леонтовича", "«Тихая ночь»", "«Jingle Bells»", "«Колокольчики»"], 0, "Украинская песня, 1916 — звучит в «Один дома»."],
+["xmas", "На каком языке изначально написана «Тихая ночь»?", ["Немецком", "Английском", "Польском", "Латыни"], 0, "«Stille Nacht», 1818, Австрия."],
+["xmas", "Кто исполнил «Happy Xmas (War Is Over)»?", ["John Lennon и Yoko Ono", "Paul McCartney", "George Harrison", "Elton John"], 0, "1971."],
+["xmas", "Чья «Wonderful Christmastime»?", ["Paul McCartney", "John Lennon", "Elton John", "Rod Stewart"], 0, "1979."],
+["xmas", "Какая группа собрала звёзд для «Do They Know It's Christmas?» в 1984-м?", ["Band Aid", "Live Aid", "USA for Africa", "We Are the World"], 0, "Боб Гелдоф и Мидж Юр."],
+["xmas", "Чья рождественская песня «Thank God It's Christmas»?", ["Queen", "ABBA", "Wham!", "Slade"], 0, "1984."],
+["bio", "Кто сыграл Фредди Меркьюри в «Богемской рапсодии»?", ["Рами Малек", "Тэрон Эджертон", "Остин Батлер", "Бен Уишоу"], 0, "«Оскар» 2019."],
+["bio", "Кто сыграл Элтона Джона в «Рокетмене»?", ["Тэрон Эджертон", "Рами Малек", "Джек Уайтхолл", "Ричард Мэдден"], 0, "2019."],
+["bio", "Кто сыграл Элвиса в фильме 2022 года?", ["Остин Батлер", "Тимоти Шаламе", "Джейкоб Элорди", "Майлз Теллер"], 0, "База Лурман."],
+["bio", "Кого сыграл Тимоти Шаламе в «Полном незнакомце» (2024)?", ["Боба Дилана", "Джонни Кэша", "Пита Сигера", "Леонарда Коэна"], 0, ""],
+["bio", "О ком фильм «Переступить черту» (2005)?", ["Джонни Кэш", "Элвис Пресли", "Рэй Чарльз", "Бадди Холли"], 0, "Хоакин Феникс."],
+["bio", "Кто сыграл Рэя Чарльза в «Рэе»?", ["Джейми Фокс", "Уилл Смит", "Дензел Вашингтон", "Мехершала Али"], 0, "«Оскар» 2005."],
+["bio", "На чём играет герой «Одержимости» (Whiplash)?", ["Ударные", "Труба", "Контрабас", "Фортепиано"], 0, ""],
+["bio", "Песни какой группы звучат в «Мамма Миа!»?", ["ABBA", "Bee Gees", "Boney M.", "Roxette"], 0, ""],
+["bio", "Кто снял и сыграл главную роль в «Звезда родилась» (2018)?", ["Брэдли Купер", "Райан Гослинг", "Хью Джекман", "Джерард Батлер"], 0, ""],
+["bio", "О ком фильм «Амадей»?", ["Моцарт", "Бетховен", "Бах", "Вивальди"], 0, "1984, 8 «Оскаров»."],
+["bio", "О какой певице фильм «Back to Black» (2024)?", ["Эми Уайнхаус", "Адель", "Лили Аллен", "Даффи"], 0, ""],
+["bio", "Кто написал песни к «Королю Льву» (1994)?", ["Элтон Джон и Тим Райс", "Фил Коллинз", "Алан Менкен", "Ханс Циммер"], 0, "Музыку к фильму написал Циммер, песни — Элтон Джон."],
+["bio", "Кто написал мюзикл «Призрак оперы»?", ["Эндрю Ллойд Уэббер", "Алан Менкен", "Стивен Сондхайм", "Тим Райс"], 0, ""],
+["bio", "Кто сыграл Боба Марли в «Боб Марли: Одна любовь»?", ["Кингсли Бен-Адир", "Идрис Эльба", "Джон Бойега", "Дэниел Калуя"], 0, "2024."],
+["rock", "«Smoke on the Water» — о пожаре в каком городе?", ["Монтрё", "Женева", "Мюнхен", "Лондон"], 0, "Казино сгорело на концерте Фрэнка Заппы, 1971."],
+["rock", "Какой басист Metallica погиб в аварии автобуса в 1986-м?", ["Клифф Бёртон", "Джейсон Ньюстед", "Роберт Трухильо", "Кирк Хэмметт"], 0, ""],
+["rock", "AC/DC — из какой страны?", ["Австралия", "Великобритания", "США", "Канада"], 0, "Братья Янг родились в Шотландии."],
+["rock", "Вокалист Guns N' Roses?", ["Эксл Роуз", "Слэш", "Дафф Маккаган", "Стивен Тайлер"], 0, ""],
+["rock", "Кто основал Foo Fighters?", ["Дэйв Грол", "Крис Корнелл", "Эдди Веддер", "Крист Новоселич"], 0, "Бывший барабанщик Nirvana."],
+["rock", "Вокалист Led Zeppelin?", ["Роберт Плант", "Джимми Пейдж", "Оззи Осборн", "Иэн Гиллан"], 0, ""],
+["rock", "Ирландская группа, фронтмен Боно?", ["U2", "The Cranberries", "Thin Lizzy", "The Pogues"], 0, ""],
+["rock", "Какой гитарист Queen — доктор астрофизики?", ["Брайан Мэй", "Джон Дикон", "Роджер Тейлор", "Марк Нопфлер"], 0, ""],
+["rock", "Кто стал вокалисткой Linkin Park в 2024-м?", ["Эмили Армстронг", "Эми Ли", "Хейли Уильямс", "Лиззи Хейл"], 0, ""],
+["rock", "Чья песня «Seven Nation Army»?", ["The White Stripes", "The Black Keys", "The Strokes", "Arctic Monkeys"], 0, "Рифф поют на стадионах всего мира."],
+["rock", "Музыканты System of a Down — какого происхождения?", ["Армянского", "Греческого", "Ливанского", "Иранского"], 0, ""],
+["rock", "Какая группа выступает в гриме «Демон» и «Звёздное дитя»?", ["Kiss", "Alice Cooper", "Slipknot", "Twisted Sister"], 0, ""],
+["rock", "Какой гитарист The Who прославился тем, что разбивал гитары?", ["Пит Таунсенд", "Джимми Пейдж", "Ричи Блэкмор", "Эрик Клэптон"], 0, ""],
+["rock", "Фронтмен Radiohead?", ["Том Йорк", "Мэтт Беллами", "Крис Мартин", "Деймон Албарн"], 0, ""],
+["rock", "Muse — из какой страны?", ["Великобритания", "США", "Канада", "Австралия"], 0, "Тинмут, Девон."],
+["rock", "Чей альбом «American Idiot» (2004)?", ["Green Day", "The Offspring", "Blink-182", "Sum 41"], 0, ""],
+["hiphop", "За какой альбом Кендрик Ламар получил Пулитцеровскую премию?", ["DAMN.", "good kid, m.A.A.d city", "To Pimp a Butterfly", "GNX"], 0, "2018 — первый в истории не-классический и не-джазовый альбом с Пулитцером."],
+["hiphop", "Кто выступил в перерыве Супербоула-2025?", ["Kendrick Lamar", "Eminem", "Drake", "Travis Scott"], 0, ""],
+["hiphop", "На кого дисс «Not Like Us»?", ["Drake", "J. Cole", "Kanye West", "Future"], 0, "Кендрик Ламар, 2024."],
+["hiphop", "Как зовут альтер эго Эминема?", ["Slim Shady", "Ziggy Stardust", "Sasha Fierce", "Chris Gaines"], 0, ""],
+["hiphop", "Какое побережье представлял 2Pac?", ["Западное", "Восточное", "Южное", "Средний Запад"], 0, "Против Восточного — Notorious B.I.G."],
+["hiphop", "Откуда Wu-Tang Clan?", ["Нью-Йорк", "Лос-Анджелес", "Атланта", "Детройт"], 0, "Стейтен-Айленд."],
+["hiphop", "Какой бренд наушников основал Dr. Dre?", ["Beats", "Bose", "Skullcandy", "JBL"], 0, "Продан Apple за 3 млрд долларов."],
+["hiphop", "Из какого города Drake?", ["Торонто", "Детройт", "Атланта", "Монреаль"], 0, ""],
+["hiphop", "Где родилась Ники Минаж?", ["Тринидад и Тобаго", "Ямайка", "Барбадос", "Нью-Йорк"], 0, ""],
+["hiphop", "Какому бренду Run-DMC посвятили песню?", ["adidas", "Nike", "Puma", "Reebok"], 0, "«My Adidas», 1986."],
+["hiphop", "Кто открыл миру Snoop Dogg?", ["Dr. Dre", "Ice Cube", "Eminem", "Jay-Z"], 0, ""],
+["hiphop", "Как назывался дебютный альбом Канье Уэста?", ["The College Dropout", "Graduation", "Late Registration", "Yeezus"], 0, "2004."],
+["hiphop", "Кто выступил в перерыве Супербоула-2026?", ["Bad Bunny", "Kendrick Lamar", "Drake", "Cardi B"], 0, ""],
+["dance", "Darude («Sandstorm») — из какой страны?", ["Финляндия", "Швеция", "Нидерланды", "Германия"], 0, ""],
+["dance", "Чей трек «Levels»?", ["Avicii", "Swedish House Mafia", "Alesso", "Kygo"], 0, "Швеция, 2011."],
+["dance", "Eiffel 65 («Blue») — из какой страны?", ["Италия", "Франция", "Испания", "Бельгия"], 0, ""],
+["dance", "Чей «Freed from Desire»?", ["Gala", "Corona", "Alexia", "Whigfield"], 0, "Италия, 1996 — любимая кричалка футбольных фанатов."],
+["dance", "Чей «Rhythm of the Night»?", ["Corona", "Gala", "Culture Beat", "Snap!"], 0, "1993."],
+["dance", "Чей сэмпл в «Call on Me» Эрика Придза?", ["Steve Winwood", "Phil Collins", "Hall & Oates", "Rick Astley"], 0, "«Valerie», 1982."],
+["dance", "Чей трек «Titanium»?", ["David Guetta feat. Sia", "Calvin Harris feat. Rihanna", "Avicii feat. Aloe Blacc", "Zedd feat. Foxes"], 0, "2011."],
+["dance", "Сколько лет было Martin Garrix, когда вышел «Animals»?", ["17", "15", "21", "24"], 0, "2013."],
+["dance", "Кто из Daft Punk стоит за «Music Sounds Better with You» (Stardust)?", ["Томас Бангальтер", "Ги-Мануэль де Омем-Кристо", "Тодд Эдвардс", "Бежамен Диамон"], 0, ""],
+["dance", "Чей трек «Children» (1995)?", ["Robert Miles", "Faithless", "ATB", "Paul van Dyk"], 0, ""],
+["dance", "Scooter — из какой страны?", ["Германия", "Нидерланды", "Австрия", "Великобритания"], 0, ""],
+["dance", "Чей хит «Lambada»?", ["Kaoma", "Los del Río", "Las Ketchup", "Gipsy Kings"], 0, "1989."],
+["dance", "Чей хит «Macarena»?", ["Los del Río", "Kaoma", "Las Ketchup", "Ricky Martin"], 0, "1993."],
+["dance", "O-Zone («Dragostea din tei») — из какой страны?", ["Молдова", "Румыния", "Болгария", "Венгрия"], 0, ""],
+["dance", "Чей «Better Off Alone»?", ["Alice Deejay", "Vengaboys", "ATB", "DJ Sammy"], 0, "1999."],
+["dance", "Чей «Satisfaction» (2002)?", ["Benny Benassi", "Bob Sinclar", "David Guetta", "Eric Prydz"], 0, ""],
+["now", "Чей хит «drivers license»?", ["Olivia Rodrigo", "Billie Eilish", "Sabrina Carpenter", "Gracie Abrams"], 0, "2021."],
+["now", "Чей хит «Heat Waves»?", ["Glass Animals", "The 1975", "Alt-J", "Foster the People"], 0, ""],
+["now", "Чей хит «Espresso»?", ["Sabrina Carpenter", "Olivia Rodrigo", "Tate McRae", "Dua Lipa"], 0, "2024."],
+["now", "Чей хит «Flowers»?", ["Miley Cyrus", "Selena Gomez", "Taylor Swift", "Demi Lovato"], 0, "2023."],
+["now", "Чей хит «Kill Bill»?", ["SZA", "Doja Cat", "Rihanna", "Normani"], 0, "2022."],
+["now", "Чей оригинал «Beggin'», который перепели Måneskin?", ["The Four Seasons", "The Beach Boys", "The Supremes", "The Temptations"], 0, "1967."],
+["now", "Чей хит «Good Luck, Babe!»?", ["Chappell Roan", "Reneé Rapp", "Gracie Abrams", "Sabrina Carpenter"], 0, "2024."],
+["now", "Чей хит «Birds of a Feather»?", ["Billie Eilish", "Lana Del Rey", "Olivia Rodrigo", "Lorde"], 0, "2024."],
+["now", "Кто спел «Stay» с Джастином Бибером?", ["The Kid LAROI", "Post Malone", "Shawn Mendes", "Khalid"], 0, "2021."],
+["now", "Чей хит «Beautiful Things»?", ["Benson Boone", "Teddy Swims", "Hozier", "Noah Kahan"], 0, "2024."],
+["now", "Чей хит «Lose Control» (2023)?", ["Teddy Swims", "Benson Boone", "Lewis Capaldi", "Tom Odell"], 0, ""],
+["now", "Чей хит «Abracadabra» (2025)?", ["Lady Gaga", "Doechii", "Charli XCX", "Dua Lipa"], 0, ""],
+["now", "Чей хит «Ordinary» (2025)?", ["Alex Warren", "Benson Boone", "Teddy Swims", "Lewis Capaldi"], 0, ""],
+["now", "Как называется альбом Тейлор Свифт 2025 года?", ["The Life of a Showgirl", "The Tortured Poets Department", "Midnights", "Lover"], 0, ""],
+["now", "Чей альбом «Cowboy Carter» получил «Альбом года» на «Грэмми-2025»?", ["Beyoncé", "Taylor Swift", "Billie Eilish", "Sabrina Carpenter"], 0, ""],
+["now", "Чей хит «As It Was»?", ["Harry Styles", "Shawn Mendes", "Niall Horan", "Lewis Capaldi"], 0, "2022."],
+["now", "Чей хит «Anti-Hero»?", ["Taylor Swift", "Olivia Rodrigo", "Lorde", "Phoebe Bridgers"], 0, "2022."],
+["uaby", "Кто солистка KAZKA?", ["Александра Зарицкая", "Ната Жижченко", "Юлия Санина", "Катерина Павленко"], 0, "Ната — ONUKA, Санина — The Hardkiss, Павленко — Go_A."],
+["uaby", "Кто солистка Go_A?", ["Катерина Павленко", "Александра Зарицкая", "Джамала", "Тина Кароль"], 0, ""],
+["uaby", "Кто солистка ONUKA?", ["Ната Жижченко", "Александра Зарицкая", "Юлия Санина", "Jerry Heil"], 0, "Электро-фолк с трембитой и сопилкой."],
+["uaby", "Что Kalush Orchestra сделали с хрустальным микрофоном Евровидения?", ["Продали на аукционе, деньги — на армию", "Подарили музею", "Разбили на сцене", "Оставили в Турине"], 0, "900 тысяч долларов."],
+["uaby", "С какой песней Тина Кароль выступила на Евровидении-2006?", ["Show Me Your Love", "Wild Dances", "Shady Lady", "Angel"], 0, "7-е место."],
+["uaby", "Кто выступил на Евровидении-2018 с «Under the Ladder»?", ["MÉLOVIN", "Max Barskih", "Ivan Dorn", "Alekseev"], 0, "Подъём из рояля по лестнице."],
+["uaby", "Кто основал белорусских «Песняров»?", ["Владимир Мулявин", "Сергей Михалок", "Лявон Вольский", "Анатолий Кашепаров"], 0, ""],
+["uaby", "Кто фронтмен «Антитіл»?", ["Тарас Тополя", "Святослав Вакарчук", "Олег Скрипка", "Олег Псюк"], 0, ""],
+["uaby", "Кто фронтмен Kalush Orchestra?", ["Олег Псюк", "Тарас Тополя", "Олег Винник", "Иван Клименко"], 0, ""],
+["uaby", "Настоящее имя Jerry Heil?", ["Яна Шемаева", "Алёна Савраненко", "Ната Жижченко", "Юлия Санина"], 0, "Алёна Савраненко — это alyona alyona."],
+["uaby", "Как называется группа Олега Скрипки?", ["Воплі Відоплясова", "Океан Ельзи", "Скрябін", "Бумбокс"], 0, "«ВВ», хит «Весна»."],
+["uaby", "Кто фронтмен «Бумбокса»?", ["Андрей Хлывнюк", "Олег Скрипка", "Тарас Тополя", "Святослав Вакарчук"], 0, "Хит «Вахтерам»."],
+["intl", "Из какого города Бруно Марс?", ["Гонолулу", "Лос-Анджелес", "Майами", "Новый Орлеан"], 0, "Гавайи."],
+["intl", "Шакира — из какой страны?", ["Колумбия", "Мексика", "Венесуэла", "Аргентина"], 0, "Барранкилья."],
+["intl", "BTS — из какой страны?", ["Южная Корея", "Япония", "Китай", "Таиланд"], 0, ""],
+["intl", "Корни Дуа Липы — какие?", ["Албанские (Косово)", "Хорватские", "Греческие", "Боснийские"], 0, "Родилась в Лондоне."],
+["intl", "Måneskin — из какой страны?", ["Италия", "Испания", "Дания", "Франция"], 0, "Рим."],
+["intl", "Бьорк — из какой страны?", ["Исландия", "Норвегия", "Финляндия", "Дания"], 0, ""],
+["intl", "Stromae — из какой страны?", ["Бельгия", "Франция", "Швейцария", "Канада"], 0, "«Papaoutai», «Alors on danse»."],
+["intl", "Фронтмен Coldplay?", ["Крис Мартин", "Адам Левин", "Брэндон Флауэрс", "Гай Гарви"], 0, ""],
+["intl", "Из какой группы вышел Гарри Стайлс?", ["One Direction", "Take That", "The Wanted", "Westlife"], 0, ""],
+["intl", "Из какой группы вышла Бейонсе?", ["Destiny's Child", "TLC", "En Vogue", "Fifth Harmony"], 0, ""],
+["intl", "Из какой группы вышел Джастин Тимберлейк?", ["*NSYNC", "Backstreet Boys", "Boyz II Men", "98 Degrees"], 0, ""],
+["intl", "Как называется шоу ABBA с цифровыми аватарами в Лондоне?", ["ABBA Voyage", "ABBA Forever", "Mamma Mia! Live", "ABBA Arrival"], 0, ""],
+["intl", "Как называется косметический бренд Рианны?", ["Fenty Beauty", "Rare Beauty", "Haus Labs", "Kylie Cosmetics"], 0, ""],
+["years", "В каком году прошёл Вудсток?", ["1969", "1965", "1967", "1972"], 0, ""],
+["years", "В каком году умер Элвис Пресли?", ["1977", "1973", "1980", "1985"], 0, ""],
+["years", "В каком году убили Джона Леннона?", ["1980", "1975", "1984", "1977"], 0, "8 декабря, Нью-Йорк."],
+["years", "В каком году умер Фредди Меркьюри?", ["1991", "1989", "1993", "1995"], 0, ""],
+["years", "В каком году умер Курт Кобейн?", ["1994", "1992", "1996", "1998"], 0, ""],
+["years", "В каком году умер Майкл Джексон?", ["2009", "2007", "2011", "2005"], 0, ""],
+["years", "В каком году умерла Эми Уайнхаус?", ["2011", "2009", "2013", "2015"], 0, "В 27 лет."],
+["years", "В каком году запустился Spotify?", ["2008", "2004", "2011", "2013"], 0, "Швеция."],
+["years", "В каком году вышел первый iPod?", ["2001", "1998", "2003", "2005"], 0, ""],
+["years", "В каком году вышел первый альбом The Beatles «Please Please Me»?", ["1963", "1960", "1965", "1967"], 0, ""],
+["years", "В каком году умер Avicii?", ["2018", "2016", "2020", "2014"], 0, ""],
+["facts", "Сколько струн у классической арфы?", ["47", "24", "36", "61"], 0, ""],
+["facts", "Сколько струн у стандартной бас-гитары?", ["4", "5", "6", "3"], 0, ""],
+["facts", "Что значит «а капелла»?", ["Пение без инструментов", "Пение хором", "Пение шёпотом", "Пение на латыни"], 0, ""],
+["facts", "На каком инструменте играют, не касаясь его?", ["Терменвокс", "Ханг", "Варган", "Калимба"], 0, "Руки двигают в электромагнитном поле."],
+["facts", "Какие инструменты делал Страдивари?", ["Скрипки и другие струнные", "Фортепиано", "Флейты", "Органы"], 0, ""],
+["facts", "В каком городе Зал славы рок-н-ролла?", ["Кливленд", "Мемфис", "Нэшвилл", "Нью-Йорк"], 0, ""],
+["facts", "Какую форму имеет статуэтка «Грэмми»?", ["Граммофон", "Микрофон", "Гитара", "Пластинка"], 0, ""],
+["facts", "В какой стране проходит Tomorrowland?", ["Бельгия", "Нидерланды", "Германия", "Испания"], 0, ""],
+["facts", "В каком городе проходит Sziget?", ["Будапешт", "Прага", "Вена", "Братислава"], 0, ""],
+["facts", "Кто был самым прослушиваемым артистом Spotify в 2024-м?", ["Taylor Swift", "The Weeknd", "Bad Bunny", "Drake"], 0, "Второй год подряд."],
+["facts", "Сколько нот в октаве по белым клавишам?", ["7", "8", "12", "5"], 0, "До, ре, ми, фа, соль, ля, си."],
+["facts", "Что означает «аллегро»?", ["Быстро", "Медленно", "Громко", "Тихо"], 0, ""],
+["emoji", "Угадай песню <span class='emo'>💎🌌👧</span>", ["Lucy in the Sky with Diamonds", "Diamonds", "Sky Full of Stars", "Starboy"], 0, "The Beatles."],
+["emoji", "Угадай песню <span class='emo'>🌈⬆️</span>", ["Over the Rainbow", "Rainbow Connection", "Somewhere Only We Know", "Up Where We Belong"], 0, ""],
+["emoji", "Угадай песню <span class='emo'>🚀👨</span>", ["Rocket Man", "Starman", "Space Oddity", "Spaceman"], 0, "Элтон Джон."],
+["emoji", "Угадай песню <span class='emo'>🧱🧱🧱</span>", ["Another Brick in the Wall", "Wonderwall", "Brick", "Walls"], 0, "Pink Floyd."],
+["emoji", "Угадай песню <span class='emo'>💨🌊</span>", ["Smoke on the Water", "Wind of Change", "Riders on the Storm", "Black Water"], 0, "Deep Purple."],
+["emoji", "Угадай песню <span class='emo'>🌹🌵</span>", ["Every Rose Has Its Thorn", "Kiss from a Rose", "Desert Rose", "Bed of Roses"], 0, "Poison."],
+["emoji", "Угадай песню <span class='emo'>🌬️🔄</span>", ["Wind of Change", "Changes", "Blowin' in the Wind", "Turn! Turn! Turn!"], 0, "Scorpions."],
+["emoji", "Угадай песню <span class='emo'>🕰️🎸</span>", ["Rock Around the Clock", "Time After Time", "Clocks", "Tick Tock"], 0, "Bill Haley."],
+["emoji", "Угадай песню <span class='emo'>🦈👶</span>", ["Baby Shark", "Baby", "Shark Attack", "Jaws Theme"], 0, "Самое просматриваемое видео YouTube."],
+["emoji", "Угадай песню <span class='emo'>👑🦁</span>", ["Circle of Life", "I Just Can't Wait to Be King", "Roar", "Eye of the Tiger"], 0, "«Король Лев»."],
+["emoji", "Угадай песню <span class='emo'>❄️👸🚪</span>", ["Let It Go", "Ice Ice Baby", "Snowman", "Frozen"], 0, "«Холодное сердце»."],
+["emoji", "Угадай песню <span class='emo'>👻🔫</span>", ["Ghostbusters", "Thriller", "Bang Bang", "Spooky"], 0, "Ray Parker Jr."],
+["covers", "Кавер: <b>Måneskin — Beggin'</b>. Чей оригинал?", ["The Four Seasons", "Madcon", "The Beach Boys", "Frankie Valli & The Temptations"], 0, "1967.", "Maneskin Beggin"],
+["covers", "Кавер: <b>Marilyn Manson — Tainted Love</b>. Чей оригинал?", ["Gloria Jones", "Soft Cell", "Marc Almond", "Depeche Mode"], 0, "Мэнсон перепевал версию Soft Cell, но оригинал — Глория Джонс.", "Marilyn Manson Tainted Love"],
+["covers", "Кавер: <b>Placebo — Running Up That Hill</b>. Чей оригинал?", ["Kate Bush", "Cyndi Lauper", "Annie Lennox", "Siouxsie and the Banshees"], 0, "1985.", "Placebo Running Up That Hill"],
+["covers", "Кавер: <b>Guns N' Roses — Knockin' on Heaven's Door</b>. Чей оригинал?", ["Bob Dylan", "Eric Clapton", "Neil Young", "Bruce Springsteen"], 0, "1973, для фильма «Пэт Гэрретт и Билли Кид».", "Guns N Roses Knockin on Heavens Door"],
+["covers", "Кавер: <b>Guns N' Roses — Live and Let Die</b>. Чей оригинал?", ["Paul McCartney & Wings", "The Beatles", "Shirley Bassey", "Duran Duran"], 0, "Тема Бонда, 1973.", "Guns N Roses Live and Let Die"],
+["covers", "Кавер: <b>Metallica — Whiskey in the Jar</b>. Чей оригинал?", ["Ирландская народная (популяризировали Thin Lizzy)", "The Pogues", "U2", "The Dubliners"], 0, "«Грэмми» за кавер, 2000.", "Metallica Whiskey in the Jar"],
+["covers", "Кавер: <b>Joe Cocker — With a Little Help from My Friends</b>. Чей оригинал?", ["The Beatles", "The Rolling Stones", "Bob Dylan", "The Who"], 0, "1967, вокал Ринго.", "Joe Cocker With a Little Help from My Friends"],
+["covers", "Кавер: <b>Celine Dion — All by Myself</b>. Чей оригинал?", ["Eric Carmen", "Barry Manilow", "Elton John", "Billy Joel"], 0, "1975.", "Celine Dion All by Myself"],
+["covers", "Кавер: <b>Fugees — Killing Me Softly</b>. Чья самая известная ранняя версия?", ["Roberta Flack", "Aretha Franklin", "Gladys Knight", "Dionne Warwick"], 0, "Первой песню записала Лори Либерман, хитом сделала Роберта Флэк.", "Fugees Killing Me Softly"],
+["covers", "Кавер: <b>Pentatonix — Hallelujah</b>. Кто автор?", ["Leonard Cohen", "Jeff Buckley", "Rufus Wainwright", "John Cale"], 0, ""],
+["covers", "Кавер: <b>Michael Bublé — Feeling Good</b>. Кто спел знаменитую раннюю версию?", ["Nina Simone", "Ella Fitzgerald", "Billie Holiday", "Etta James"], 0, "1965.", "Michael Buble Feeling Good"],
+["covers", "Кавер: <b>Pet Shop Boys — Always on My Mind</b>. Кто пел знаменитую раннюю версию?", ["Elvis Presley", "Frank Sinatra", "Johnny Cash", "Dean Martin"], 0, "1972.", "Pet Shop Boys Always on My Mind"],
+["covers", "Кавер: <b>Eva Cassidy — Fields of Gold</b>. Кто автор?", ["Sting", "Phil Collins", "Mark Knopfler", "Peter Gabriel"], 0, "1993.", "Eva Cassidy Fields of Gold"],
+["covers", "Кавер: <b>Lana Del Rey — Doin' Time</b>. Чей оригинал?", ["Sublime", "Red Hot Chili Peppers", "No Doubt", "Sugar Ray"], 0, "Песня 1996 года.", "Lana Del Rey Doin Time"],
+["covers", "Кавер: <b>Muse — Feeling Good</b>. Тот же оригинал, что у Бубле. Откуда песня?", ["Из мюзикла 1964 года", "Из фильма о Бонде", "Из рекламы", "Из оперы"], 0, "«The Roar of the Greasepaint», Энтони Ньюли и Лесли Брикасс.", "Muse Feeling Good"],
+["covers", "Кавер: <b>Joan Jett — I Love Rock 'n' Roll</b>. Чей оригинал?", ["The Arrows", "The Runaways", "Kiss", "The Ramones"], 0, "1975.", "Joan Jett I Love Rock n Roll"],
+["covers", "Кавер: <b>Ike & Tina Turner — Proud Mary</b>. Чей оригинал?", ["Creedence Clearwater Revival", "The Band", "The Doors", "The Eagles"], 0, "1969.", "Tina Turner Proud Mary"]]);
+Object.assign(R,{trans:"Переведи название",albums:"Альбомы и обложки",names:"Настоящие имена",film:"Песни из кино",tv:"Сериалы",game:"Музыка из игр",euro:"Евровидение",pl:"Польская сцена",duets:"Дуэты и фиты",xmas:"Новогодние хиты",bio:"Фильмы о музыке",rock:"Рок",hiphop:"Хип-хоп",dance:"Танцевальная",now:"2020-е"});
+Q.push(...[["look", "Кто это? Выступают в шлемах роботов — лиц почти никогда не показывали.", ["Daft Punk", "Justice", "Kraftwerk", "Gorillaz"], 0, "Французский дуэт, распался в 2021-м."], ["look", "Кто это? Прячет лицо под огромным париком-каре с чёлкой.", ["Sia", "Lorde", "Billie Eilish", "Lady Gaga"], 0, "Так она защищает свою приватность."], ["look", "Кто это? Выходил на сцену в одной белой перчатке со стразами.", ["Michael Jackson", "Prince", "Elvis Presley", "James Brown"], 0, ""], ["look", "Кто это? Девять музыкантов в жутких масках, группа из Айовы.", ["Slipknot", "Kiss", "Ghost", "Lordi"], 0, ""], ["look", "Кто это? Гитарист в цилиндре, с копной кудрей и сигаретой.", ["Слэш", "Брайан Мэй", "Эйс Фрейли", "Джимми Пейдж"], 0, "Guns N' Roses."], ["look", "Кто это? Белая майка, усы и жёлтая военная куртка на «Уэмбли» в 1986-м.", ["Фредди Меркьюри", "Роджер Тейлор", "Джордж Майкл", "Брюс Спрингстин"], 0, "Queen."], ["look", "Кто это? Платье из сырого мяса на церемонии MTV в 2010-м.", ["Lady Gaga", "Katy Perry", "Nicki Minaj", "Rihanna"], 0, ""], ["look", "Кто это? Конический корсет от Жан-Поля Готье в туре 1990 года.", ["Madonna", "Cher", "Kylie Minogue", "Janet Jackson"], 0, "Blond Ambition Tour."], ["look", "Кто это? Молния через лицо и образ инопланетянина Зигги Стардаста.", ["David Bowie", "Marc Bolan", "Iggy Pop", "Elton John"], 0, ""], ["look", "Кто это? Выступает в белом шлеме-зефире с нарисованной улыбкой.", ["Marshmello", "Deadmau5", "Daft Punk", "Bloody Beetroots"], 0, ""], ["look", "Кто это? Выступает в огромном светящемся шлеме в виде головы мыши.", ["Deadmau5", "Marshmello", "Skrillex", "Daft Punk"], 0, ""], ["look", "Кто это? Фронтмен в гриме скелета и облачении «антипапы».", ["Ghost", "Slipknot", "Behemoth", "Marilyn Manson"], 0, "Шведская группа, лидер — Тобиас Форге."], ["look", "Кто это? Мешковатая одежда и волосы с ярко-зелёными корнями.", ["Billie Eilish", "Olivia Rodrigo", "Halsey", "Doja Cat"], 0, ""], ["look", "Кто это? Гигантские очки, костюмы в перьях и стразах.", ["Elton John", "Freddie Mercury", "Liberace", "Gary Glitter"], 0, ""], ["look", "Кто это? Сменил имя на нечитаемый символ.", ["Prince", "David Bowie", "Marilyn Manson", "Sting"], 0, "Его называли «Артист, ранее известный как Принс»."], ["look", "Кто это? Гитарист в школьной форме с шортами и галстуком.", ["Ангус Янг", "Слэш", "Кирк Хэмметт", "Эдди Ван Хален"], 0, "AC/DC."], ["look", "Кто это? Красный пиджак и пластыри на лице в эпоху «After Hours».", ["The Weeknd", "Bruno Mars", "Drake", "Post Malone"], 0, ""], ["look", "Кто это? Виртуальная группа: на сцене — мультяшные персонажи.", ["Gorillaz", "Daft Punk", "Blur", "The Prodigy"], 0, "Деймон Албарн и художник Джейми Хьюлетт."], ["look", "Кто это? Монстры в латексных масках, победившие на Евровидении.", ["Lordi", "Slipknot", "Ghost", "Gwar"], 0, "Финляндия, 2006."], ["look", "Кто это? Шляпа, яркий макияж и косички — фронтмен Culture Club.", ["Бой Джордж", "Джордж Майкл", "Саймон Ле Бон", "Принс"], 0, ""], ["look", "Кто это? Фетровые шляпы, кожаные куртки и adidas без шнурков.", ["Run-DMC", "Beastie Boys", "Public Enemy", "N.W.A"], 0, ""], ["look", "Кто это? Полицейский, строитель, байкер, ковбой — все в одной группе.", ["Village People", "Boney M.", "Bee Gees", "KC and the Sunshine Band"], 0, "«Y.M.C.A.»."], ["look", "Кто это? Белый комбинезон со стразами и высоким воротником в Лас-Вегасе.", ["Elvis Presley", "Tom Jones", "Johnny Cash", "Liberace"], 0, ""], ["look", "Кто это? Демон, Звёздное дитя, Космический туз и Кот — в гриме.", ["Kiss", "Alice Cooper", "Twisted Sister", "Mötley Crüe"], 0, ""], ["look", "Кто это? Кукольная чёлка, огромные банты и розовое — образ «Harajuku».", ["Gwen Stefani", "Avril Lavigne", "Katy Perry", "Lady Gaga"], 0, ""]]);R.look="Угадай по образу";
+const SND={"Кавер: <b>Johnny Cash — Hurt</b> (2002). Кто автор оригинала?": ["Johnny Cash", "Hurt", "🎧 Послушай кавер. Чей это оригинал?"], "Кавер: <b>Whitney Houston — I Will Always Love You</b>. Кто спел первым?": ["Whitney Houston", "I Will Always Love You", "🎧 Послушай кавер. Чей это оригинал?"], "Кавер: <b>Soft Cell — Tainted Love</b> (1981). Чей оригинал?": ["Soft Cell", "Tainted Love", "🎧 Послушай кавер. Чей это оригинал?"], "Кавер: <b>Gary Jules — Mad World</b>. Чей оригинал?": ["Gary Jules", "Mad World", "🎧 Послушай кавер. Чей это оригинал?"], "Кавер: <b>Jeff Buckley — Hallelujah</b>. Кто автор?": ["Jeff Buckley", "Hallelujah", "🎧 Послушай кавер. Чей это оригинал?"], "Кавер: <b>Nirvana — The Man Who Sold the World</b> (MTV Unplugged). Чей оригинал?": ["Nirvana", "The Man Who Sold the World", "🎧 Послушай кавер. Чей это оригинал?"], "Кавер: <b>Sinéad O'Connor — Nothing Compares 2 U</b>. Кто автор?": ["Sinéad O'Connor", "Nothing Compares 2 U", "🎧 Послушай кавер. Чей это оригинал?"], "Кавер: <b>Amy Winehouse & Mark Ronson — Valerie</b>. Чей оригинал?": ["Mark Ronson", "Valerie", "🎧 Послушай кавер. Чей это оригинал?"], "Кавер: <b>Jimi Hendrix — All Along the Watchtower</b>. Кто автор?": ["Jimi Hendrix", "All Along the Watchtower", "🎧 Послушай кавер. Чей это оригинал?"], "Кавер: <b>Aretha Franklin — Respect</b>. Кто спел первым?": ["Aretha Franklin", "Respect", "🎧 Послушай кавер. Чей это оригинал?"], "Кавер: <b>Marilyn Manson — Sweet Dreams</b>. Чей оригинал?": ["Marilyn Manson", "Sweet Dreams", "🎧 Послушай кавер. Чей это оригинал?"], "Кавер: <b>Natalie Imbruglia — Torn</b>. Чей оригинал?": ["Natalie Imbruglia", "Torn", "🎧 Послушай кавер. Чей это оригинал?"], "Кавер: <b>Cyndi Lauper — Girls Just Want to Have Fun</b>. Кто автор оригинала?": ["Cyndi Lauper", "Girls Just Want to Have Fun", "🎧 Послушай кавер. Чей это оригинал?"], "Кавер: <b>Alien Ant Farm — Smooth Criminal</b>. Чей оригинал?": ["Alien Ant Farm", "Smooth Criminal", "🎧 Послушай кавер. Чей это оригинал?"], "Кавер: <b>Disturbed — The Sound of Silence</b>. Чей оригинал?": ["Disturbed", "The Sound of Silence", "🎧 Послушай кавер. Чей это оригинал?"], "Кавер: <b>UB40 — Red Red Wine</b>. Кто автор?": ["UB40", "Red Red Wine", "🎧 Послушай кавер. Чей это оригинал?"], "Кавер: <b>Måneskin — Beggin'</b>. Чей оригинал?": ["Måneskin", "Beggin'", "🎧 Послушай кавер. Чей это оригинал?"], "Кавер: <b>Marilyn Manson — Tainted Love</b>. Чей оригинал?": ["Marilyn Manson", "Tainted Love", "🎧 Послушай кавер. Чей это оригинал?"], "Кавер: <b>Placebo — Running Up That Hill</b>. Чей оригинал?": ["Placebo", "Running Up That Hill", "🎧 Послушай кавер. Чей это оригинал?"], "Кавер: <b>Guns N' Roses — Knockin' on Heaven's Door</b>. Чей оригинал?": ["Guns N' Roses", "Knockin' on Heaven's Door", "🎧 Послушай кавер. Чей это оригинал?"], "Кавер: <b>Guns N' Roses — Live and Let Die</b>. Чей оригинал?": ["Guns N' Roses", "Live and Let Die", "🎧 Послушай кавер. Чей это оригинал?"], "Кавер: <b>Metallica — Whiskey in the Jar</b>. Чей оригинал?": ["Metallica", "Whiskey in the Jar", "🎧 Послушай кавер. Чей это оригинал?"], "Кавер: <b>Joe Cocker — With a Little Help from My Friends</b>. Чей оригинал?": ["Joe Cocker", "With a Little Help from My Friends", "🎧 Послушай кавер. Чей это оригинал?"], "Кавер: <b>Celine Dion — All by Myself</b>. Чей оригинал?": ["Celine Dion", "All by Myself", "🎧 Послушай кавер. Чей это оригинал?"], "Кавер: <b>Fugees — Killing Me Softly</b>. Чья самая известная ранняя версия?": ["Fugees", "Killing Me Softly", "🎧 Послушай кавер. Чей это оригинал?"], "Кавер: <b>Pentatonix — Hallelujah</b>. Кто автор?": ["Pentatonix", "Hallelujah", "🎧 Послушай кавер. Чей это оригинал?"], "Кавер: <b>Michael Bublé — Feeling Good</b>. Кто спел знаменитую раннюю версию?": ["Michael Bublé", "Feeling Good", "🎧 Послушай кавер. Чей это оригинал?"], "Кавер: <b>Pet Shop Boys — Always on My Mind</b>. Кто пел знаменитую раннюю версию?": ["Pet Shop Boys", "Always on My Mind", "🎧 Послушай кавер. Чей это оригинал?"], "Кавер: <b>Eva Cassidy — Fields of Gold</b>. Кто автор?": ["Eva Cassidy", "Fields of Gold", "🎧 Послушай кавер. Чей это оригинал?"], "Кавер: <b>Lana Del Rey — Doin' Time</b>. Чей оригинал?": ["Lana Del Rey", "Doin' Time", "🎧 Послушай кавер. Чей это оригинал?"], "Кавер: <b>Joan Jett — I Love Rock 'n' Roll</b>. Чей оригинал?": ["Joan Jett", "I Love Rock 'n' Roll", "🎧 Послушай кавер. Чей это оригинал?"], "Кавер: <b>Ike & Tina Turner — Proud Mary</b>. Чей оригинал?": ["Ike & Tina Turner", "Proud Mary", "🎧 Послушай кавер. Чей это оригинал?"], "Из какого фильма «(I've Had) The Time of My Life»?": ["Bill Medley", "(I've Had) The Time of My Life", "🎧 Из какого фильма эта песня?"], "Из какого фильма «Shallow» (Lady Gaga)?": ["Lady Gaga", "Shallow", "🎧 Из какого фильма эта песня?"], "Из какого фильма «Skyfall» (Adele)?": ["Adele", "Skyfall", "🎧 Из какого фильма эта песня?"], "Из какого фильма «I Will Always Love You» (Уитни Хьюстон)?": ["Whitney Houston", "I Will Always Love You", "🎧 Из какого фильма эта песня?"], "Из какого фильма «I Don't Want to Miss a Thing» (Aerosmith)?": ["Aerosmith", "I Don't Want to Miss a Thing", "🎧 Из какого фильма эта песня?"], "Из какого фильма «Oh, Pretty Woman»?": ["Roy Orbison", "Oh, Pretty Woman", "🎧 Из какого фильма эта песня?"], "Из какого фильма «Hooked on a Feeling» с её «уга-чака»?": ["Blue Swede", "Hooked on a Feeling", "🎧 Из какого фильма эта песня?"], "Из какого мультфильма «All Star» (Smash Mouth)?": ["Smash Mouth", "All Star", "🎧 Из какого мультфильма эта песня?"], "Из какого фильма «The Power of Love» (Huey Lewis)?": ["Huey Lewis", "The Power of Love", "🎧 Из какого фильма эта песня?"], "Из какого фильма мелодия «Lux Aeterna»?": ["Clint Mansell", "Lux Aeterna", "🎧 Из какого фильма эта песня?"], "Из какого фильма фортепианная «Comptine d'un autre été»?": ["Yann Tiersen", "Comptine d'un autre été", "🎧 Из какого фильма эта песня?"], "Из какого фильма «Born Slippy» (Underworld)?": ["Underworld", "Born Slippy", "🎧 Из какого фильма эта песня?"], "Из какого фильма «Bang Bang» (Нэнси Синатра)?": ["Nancy Sinatra", "Bang Bang", "🎧 Из какого фильма эта песня?"], "Из какого фильма «City of Stars»?": ["Ryan Gosling", "City of Stars", "🎧 Из какого фильма эта песня?"], "Из какого мультфильма «Golden» (HUNTR/X)?": ["HUNTR/X", "Golden", "🎧 Из какого мультфильма эта песня?"], "Из какого фильма «Don't You (Forget About Me)» (Simple Minds)?": ["Simple Minds", "Don't You (Forget About Me)", "🎧 Из какого фильма эта песня?"], "Из какого фильма «Unchained Melody»?": ["The Righteous Brothers", "Unchained Melody", "🎧 Из какого фильма эта песня?"], "Из какого фильма «Kiss from a Rose» (Seal)?": ["Seal", "Kiss from a Rose", "🎧 Из какого фильма эта песня?"], "Из какого фильма «Mrs. Robinson»?": ["Simon & Garfunkel", "Mrs. Robinson", "🎧 Из какого фильма эта песня?"], "Из какого фильма «Gangsta's Paradise» (Coolio)?": ["Coolio", "Gangsta's Paradise", "🎧 Из какого фильма эта песня?"], "Из какого фильма тема «Speak Softly, Love» Нино Роты?": ["Nino Rota", "Speak Softly Love", "🎧 Из какого фильма эта песня?"], "Из какого фильма «Moon River»?": ["Audrey Hepburn", "Moon River", "🎧 Из какого фильма эта песня?"], "Из какого мультфильма «Happy» (Pharrell)?": ["Pharrell Williams", "Happy", "🎧 Из какого мультфильма эта песня?"], "Из какого мультфильма «Can't Stop the Feeling!»?": ["Justin Timberlake", "Can't Stop the Feeling", "🎧 Из какого мультфильма эта песня?"], "Из какого фильма «No Time to Die» Билли Айлиш?": ["Billie Eilish", "No Time to Die", "🎧 Из какого фильма эта песня?"], "Из какого фильма «Eye of the Tiger»?": ["Survivor", "Eye of the Tiger", "🎧 Из какого фильма эта песня?"], "Из какого фильма «Footloose» Кенни Логгинса?": ["Kenny Loggins", "Footloose", "🎧 Из какого фильма эта песня?"], "Чья песня «Running Up That Hill» вернулась в чарты после «Очень странных дел»?": ["Kate Bush", "Running Up That Hill", "🎧 Чья это песня? Она вернулась в чарты после «Очень странных дел»."], "Из какого сериала песня «Tuyo»?": ["Rodrigo Amarante", "Tuyo", "🎧 Из какого сериала эта музыка?"], "Из какого сериала заставка «Woke Up This Morning»?": ["Alabama 3", "Woke Up This Morning", "🎧 Из какого сериала эта музыка?"], "Из какого сериала заставка «Far from Any Road»?": ["The Handsome Family", "Far from Any Road", "🎧 Из какого сериала эта музыка?"], "Из какого сериала заставка «Superman» (Lazlo Bane)?": ["Lazlo Bane", "Superman", "🎧 Из какого сериала эта музыка?"], "Кто поёт заставку «Теории большого взрыва»?": ["Barenaked Ladies", "The History of Everything", "🎧 Кто исполняет эту заставку «Теории большого взрыва»?"], "Из какого сериала заставка «A Beautiful Mine» (RJD2)?": ["RJD2", "A Beautiful Mine", "🎧 Из какого сериала эта музыка?"], "Из какого сериала «Aloha!» с криками и барабанами?": ["Cristobal Tapia de Veer", "Aloha", "🎧 Из какого сериала эта музыка?"], "Из какого сериала заставка «How Soon Is Now?»?": ["Love Spit Love", "How Soon Is Now", "🎧 Из какого сериала эта музыка?"], "Кто написал музыку к «Игре престолов»?": ["Ramin Djawadi", "Game of Thrones Main Title", "🎧 Кто автор этой музыки?"], "Из какого сериала заставка «Who Are You» (The Who)?": ["The Who", "Who Are You", "🎧 Из какого сериала эта музыка?"], "Кто написал музыку к «Твин Пикс»?": ["Angelo Badalamenti", "Twin Peaks Theme", "🎧 Кто автор этой музыки?"], "Кто написал знаменитую тему «Секретных материалов»?": ["Mark Snow", "The X-Files", "🎧 Кто автор этой музыки?"], "Из какого сериала заставка «I'm Always Here»?": ["Jimi Jamison", "I'm Always Here", "🎧 Из какого сериала эта музыка?"], "Кто написал тему «Симпсонов»?": ["Danny Elfman", "The Simpsons Theme", "🎧 Кто автор этой музыки?"], "Какая песня стала первой музыкой из игры с премией «Грэмми»?": ["Christopher Tin", "Baba Yetu", "🎧 Как называется эта песня — первая музыка из игры с «Грэмми»?"], "«Legends Never Die» — гимн чемпионата по какой игре?": ["Against the Current", "Legends Never Die", "🎧 Гимн чемпионата по какой игре?"], "Из какой игры мелодия «Коробейники»?": ["", "Tetris Theme Korobeiniki", "🎧 Из какой игры эта музыка?"], "В какой серии игр впервые звучала «Song 2» (Blur)?": ["Blur", "Song 2", "🎧 В какой серии игр впервые звучала эта песня?"], "Из какой игры «Get Low» (Lil Jon)?": ["Lil Jon", "Get Low", "🎧 Из какой игры эта музыка?"], "Из какой игры «I Don't Want to Set the World on Fire»?": ["The Ink Spots", "I Don't Want to Set the World on Fire", "🎧 Из какой игры эта музыка?"], "Из какой игры «Far Away» (José González)?": ["José González", "Far Away", "🎧 Из какой игры эта музыка?"], "Кто композитор «Ведьмака 3»?": ["Marcin Przybyłowicz", "The Trail", "🎧 Кто композитор этой музыки?"], "Кто композитор The Last of Us?": ["Gustavo Santaolalla", "The Last of Us", "🎧 Кто композитор этой музыки?"], "Кто композитор Final Fantasy?": ["Nobuo Uematsu", "One-Winged Angel", "🎧 Кто композитор этой музыки?"], "Кто написал саундтрек DOOM (2016)?": ["Mick Gordon", "BFG Division", "🎧 Кто композитор этой музыки?"], "Из какой игры «Megalovania»?": ["Toby Fox", "Megalovania", "🎧 Из какой игры эта музыка?"]};Q.forEach(q=>{const x=SND[q[1]];if(x){q.snd=[x[0],x[1]];q.qa=x[2]}});
+const ALB=[["Pink Floyd", "The Dark Side of the Moon"], ["Nirvana", "Nevermind"], ["The Beatles", "Abbey Road"], ["The Beatles", "Sgt. Pepper's Lonely Hearts Club Band"], ["Michael Jackson", "Thriller"], ["Queen", "A Night at the Opera"], ["Fleetwood Mac", "Rumours"], ["AC/DC", "Back in Black"], ["Guns N' Roses", "Appetite for Destruction"], ["Metallica", "Metallica"], ["Linkin Park", "Hybrid Theory"], ["Radiohead", "OK Computer"], ["Daft Punk", "Random Access Memories"], ["Daft Punk", "Discovery"], ["Arctic Monkeys", "AM"], ["Adele", "21"], ["Adele", "25"], ["Taylor Swift", "1989"], ["Beyoncé", "Lemonade"], ["Dua Lipa", "Future Nostalgia"], ["Billie Eilish", "When We All Fall Asleep, Where Do We Go?"], ["The Weeknd", "After Hours"], ["The Weeknd", "Starboy"], ["Ed Sheeran", "÷"], ["Lady Gaga", "The Fame"], ["Amy Winehouse", "Back to Black"], ["Eminem", "The Marshall Mathers LP"], ["Kendrick Lamar", "DAMN."], ["Kanye West", "My Beautiful Dark Twisted Fantasy"], ["Drake", "Views"], ["Coldplay", "Viva la Vida or Death and All His Friends"], ["Coldplay", "A Rush of Blood to the Head"], ["Red Hot Chili Peppers", "Californication"], ["Green Day", "American Idiot"], ["Oasis", "(What's the Story) Morning Glory?"], ["Bruce Springsteen", "Born in the U.S.A."], ["Prince", "Purple Rain"], ["Madonna", "Like a Prayer"], ["David Bowie", "Aladdin Sane"], ["The Velvet Underground", "The Velvet Underground & Nico"], ["Joy Division", "Unknown Pleasures"], ["Led Zeppelin", "Led Zeppelin IV"], ["The Clash", "London Calling"], ["Bob Marley", "Legend"], ["ABBA", "Arrival"], ["Bee Gees", "Saturday Night Fever"], ["Gorillaz", "Demon Days"], ["Lana Del Rey", "Born to Die"], ["Lorde", "Pure Heroine"], ["Olivia Rodrigo", "SOUR"], ["Harry Styles", "Harry's House"], ["Sabrina Carpenter", "Short n' Sweet"], ["Charli XCX", "brat"], ["Rihanna", "Anti"], ["Britney Spears", "...Baby One More Time"], ["Whitney Houston", "The Bodyguard"], ["Bon Jovi", "Slippery When Wet"], ["Rammstein", "Mutter"], ["System of a Down", "Toxicity"], ["Imagine Dragons", "Night Visions"], ["Måneskin", "Teatro d'ira, Vol. I"], ["Okean Elzy", "Model"], ["Kalush Orchestra", "Hotin"], ["DakhaBrakha", "Alambari"], ["Dawid Podsiadło", "Małomiasteczkowy"], ["sanah", "Królowa dram"], ["Taco Hemingway", "Café Belga"]];
+ALB.push(...[["Queen", "News of the World"], ["Queen", "Greatest Hits"], ["The Rolling Stones", "Sticky Fingers"], ["Pink Floyd", "The Wall"], ["Pink Floyd", "Wish You Were Here"], ["Nirvana", "In Utero"], ["Michael Jackson", "Bad"], ["Michael Jackson", "Dangerous"], ["Madonna", "True Blue"], ["U2", "The Joshua Tree"], ["Metallica", "Master of Puppets"], ["Iron Maiden", "The Number of the Beast"], ["Black Sabbath", "Paranoid"], ["Deep Purple", "Machine Head"], ["Eagles", "Hotel California"], ["Dire Straits", "Brothers in Arms"], ["Depeche Mode", "Violator"], ["The Cure", "Disintegration"], ["Blur", "Parklife"], ["The Prodigy", "The Fat of the Land"], ["Massive Attack", "Mezzanine"], ["Gorillaz", "Gorillaz"], ["The Strokes", "Is This It"], ["The Killers", "Hot Fuss"], ["Muse", "Absolution"], ["Foo Fighters", "The Colour and the Shape"], ["blink-182", "Enema of the State"], ["The Offspring", "Americana"], ["Eminem", "The Eminem Show"], ["Dr. Dre", "2001"], ["50 Cent", "Get Rich or Die Tryin'"], ["Kanye West", "Graduation"], ["Travis Scott", "ASTROWORLD"], ["Tyler, The Creator", "IGOR"], ["Frank Ocean", "Blonde"], ["Bruno Mars", "24K Magic"], ["Justin Timberlake", "FutureSex/LoveSounds"], ["Katy Perry", "Teenage Dream"], ["Lady Gaga", "Born This Way"], ["Ariana Grande", "thank u, next"], ["Taylor Swift", "Midnights"], ["Taylor Swift", "folklore"], ["Billie Eilish", "HIT ME HARD AND SOFT"], ["Doja Cat", "Planet Her"], ["SZA", "SOS"], ["Tame Impala", "Currents"], ["Twenty One Pilots", "Blurryface"], ["Avicii", "True"], ["Stromae", "Racine carrée"], ["ABBA", "Voyage"], ["Various Artists", "Guardians of the Galaxy: Awesome Mix, Vol. 1"], ["Hans Zimmer", "Interstellar"], ["Various Artists", "Pulp Fiction"], ["Ramin Djawadi", "Game of Thrones"], ["C418", "Minecraft - Volume Alpha"], ["Toby Fox", "UNDERTALE Soundtrack"], ["Okean Elzy", "Gloria"], ["Go_A", "Shum"], ["Jamala", "1944"], ["The Hardkiss", "Залізна ластівка"]]);Q.push(...[["inst", "Что это за силуэт? <span class='sil'>🎷</span>", ["Саксофон", "Труба", "Кларнет", "Тромбон"], 0, ""], ["inst", "Что это за силуэт? <span class='sil'>🎺</span>", ["Труба", "Саксофон", "Горн", "Тромбон"], 0, ""], ["inst", "Что это за силуэт? <span class='sil'>🎸</span>", ["Гитара", "Банджо", "Укулеле", "Скрипка"], 0, ""], ["inst", "Что это за силуэт? <span class='sil'>🎻</span>", ["Скрипка", "Гитара", "Мандолина", "Арфа"], 0, ""], ["inst", "Что это за силуэт? <span class='sil'>🥁</span>", ["Барабан", "Бубен", "Литавры", "Маракасы"], 0, ""], ["inst", "Что это за силуэт? <span class='sil'>🎹</span>", ["Клавиши", "Аккордеон", "Ксилофон", "Орган"], 0, ""], ["inst", "Что это за силуэт? <span class='sil'>🪕</span>", ["Банджо", "Гитара", "Домра", "Скрипка"], 0, ""], ["inst", "Что это за силуэт? <span class='sil'>🪗</span>", ["Аккордеон", "Клавиши", "Волынка", "Губная гармошка"], 0, ""], ["inst", "Что это за силуэт? <span class='sil'>🎤</span>", ["Микрофон", "Маракас", "Барабанная палочка", "Флейта"], 0, ""], ["inst", "Что это за силуэт? <span class='sil'>🎧</span>", ["Наушники", "Микрофон", "Колонки", "Тарелки"], 0, ""], ["inst", "Что это за силуэт? <span class='sil'>📯</span>", ["Рожок", "Труба", "Саксофон", "Флейта"], 0, ""], ["inst", "Что это за силуэт? <span class='sil'>🪘</span>", ["Джембе", "Литавры", "Бубен", "Тамтам"], 0, ""]]);R.inst="Силуэты инструментов";
+const $=id=>document.getElementById(id);
+const mix=a=>{a=[...a];for(let j=a.length-1;j>0;j--){const r=Math.floor(Math.random()*(j+1));[a[j],a[r]]=[a[r],a[j]]}return a};
+const store={get(k){try{return JSON.parse(localStorage.getItem("mz_"+k))}catch(e){return null}},set(k,v){try{localStorage.setItem("mz_"+k,JSON.stringify(v))}catch(e){}}};
+const buzz=p=>{try{navigator.vibrate&&navigator.vibrate(p)}catch(e){}};
+let screen="home";
+
+function show(s){
+  document.querySelectorAll(".screen").forEach(x=>x.classList.toggle("on",x.id===s));
+  screen=s; window.scrollTo(0,0); dock();
+}
+function dock(){
+  const d=$("dockIn"); let h="";
+  if(screen==="home"){h=`<button class="btn gold" id="quick">⚡ Быстрая игра · 46</button>`}
+  else if(screen==="qset"){const n=qn?Math.min(qn,sel().length):sel().length;h=`<button class="btn gold" id="go" ${n?"":"disabled"}>Начать · ${n} вопр.</button>`}
+  else if(screen==="aset"){const n=Math.min(count||9999,pool().length);h=`<button class="btn gold" id="goA" ${n?"":"disabled"}>Начать · ${n} трек.</button>`}
+  else if(screen==="game"&&answered){h=`<button class="btn" id="next">${i+1<deck.length?"Дальше →":"Результат"}</button>`}
+  else if(screen==="aud"){h=revealed?`<div class="two"><button class="btn ok" id="ayes">Угадал</button><button class="btn bad" id="ano">Мимо</button></div>`:`<button class="btn ghost" id="areveal">Показать ответ</button>`}
+  else if(screen==="cset"){const n=ccount?Math.min(ccount,cPool().length):cPool().length;h=`<button class="btn gold" id="goC" ${n?"":"disabled"}>Начать · ${n} картин.</button>`}
+  else if(screen==="cgame"){h=cans?`<button class="btn" id="cnext">${ci+1<cdeck.length?"Дальше →":"Результат"}</button>`:`<button class="btn ghost" id="chint" ${cdeck[ci]&&clevel>=LV[cdeck[ci].m].length-2?"disabled":""}>Подсказка</button>`}
+  else if(screen==="iset"){h=`<button class="btn gold" id="goI" ${imgs.length?"":"disabled"}>${imgs.length?`Начать · ${imgs.length} картин.`:"Сначала загрузи картинки"}</button>`}
+  else if(screen==="igame"){const it=idk[ii];h=irev?`<div class="two"><button class="btn ok" id="iyes">Угадал</button><button class="btn bad" id="ino">Мимо</button></div>`:`<div class="two"><button class="btn ghost" id="ihint" ${!it||ilevel>=ILV[it.m].length-2?"disabled":""}>Подсказка</button><button class="btn" id="irev">Ответ</button></div>`}
+  else if(screen==="kset"){const n=Math.min(46,kPool().length);h=`<button class="btn gold" id="goK" ${n?"":"disabled"}>Начать · ${n} шифр.</button>`}
+  else if(screen==="kgame"){h=krev?`<div class="two"><button class="btn ok" id="kyes">Угадал</button><button class="btn bad" id="kno">Мимо</button></div>`:`<button class="btn ghost" id="krev">Показать ответ</button>`}
+  else if(screen==="end"){h=`<div class="two"><button class="btn gold" id="again">Ещё раз</button><button class="btn ghost" id="home2">Меню</button></div>`+(lastWrong.length&&lastMode==="quiz"?`<button class="btn ghost" id="retry">Повторить ошибки · ${lastWrong.length}</button>`:"")}
+  d.innerHTML=h; $("dock").classList.toggle("on",!!h);
+  const b=(id,f)=>{const e=$(id);if(e)e.onclick=f};
+  b("go",()=>startQuiz(qn?mix(sel()).slice(0,qn):sel())); b("goA",startAudio); b("next",next);
+  b("areveal",reveal); b("ayes",()=>anext(true)); b("ano",()=>anext(false));
+  b("again",()=>lastMode==="audio"?startAudio():lastMode==="kar"?kStart():lastMode==="cov"?cStart():lastMode==="img"?iStart():startQuiz(lastSet));
+  b("goK",kStart);b("goI",iStart);b("ihint",iHint);b("irev",iReveal);b("iyes",()=>iJudge(true));b("ino",()=>iJudge(false));b("goC",cStart);b("quick",()=>startQuiz(mix(Q).slice(0,46)));b("cnext",cNext);b("chint",cHint);b("krev",kReveal);b("kyes",()=>kJudge(true));b("kno",()=>kJudge(false)); b("home2",()=>show("home")); b("retry",()=>startQuiz(lastWrong));
+}
+document.querySelectorAll("[data-back]").forEach(b=>b.onclick=()=>show("home"));
+document.querySelectorAll("[data-quit]").forEach(b=>b.onclick=()=>{try{stopAll()}catch(e){}qStop();show("home")});
+
+/* HOME */
+$("qCount").textContent=`${Q.length} вопросов · ${Object.keys(R).length} раундов · со звуком`;
+function renderBest(){const b=store.get("best");$("best").textContent=b?`🏆 рекорд ${b.s}/${b.n}`:""}
+renderBest();
+$("mQuiz").onclick=()=>{renderRounds();renderCnt();show("qset")};
+
+/* QUIZ SETUP */
+let on=new Set(Object.keys(R)), shuffle=true, qn=46;
+const sel=()=>Q.filter(q=>on.has(q[0]));
+function renderCnt(){$("qcnt").innerHTML=[[20,"20"],[46,"46 · как на квизе"],[100,"100"],[0,"Все"]].map(([n,l])=>`<button class="chip ${qn===n?"on":""}" data-n="${n}">${l}</button>`).join("");$("qcnt").querySelectorAll(".chip").forEach(c=>c.onclick=()=>{qn=+c.dataset.n;renderCnt();dock()})}
+function renderRounds(){
+  $("rounds").innerHTML=Object.entries(R).map(([k,n])=>`<button class="item ${on.has(k)?'on':''}" data-k="${k}"><span class="ck">${on.has(k)?'✓':''}</span><span class="nm">${n}</span><span class="ct">${Q.filter(q=>q[0]===k).length}</span></button>`).join("");
+  $("rounds").querySelectorAll(".item").forEach(el=>el.onclick=()=>{const k=el.dataset.k;on.has(k)?on.delete(k):on.add(k);renderRounds();dock()});
+  $("all").textContent=on.size===Object.keys(R).length?"Снять все":"Выбрать все";
+}
+$("all").onclick=()=>{on=on.size===Object.keys(R).length?new Set():new Set(Object.keys(R));renderRounds();dock()};
+$("shuf").onclick=()=>{shuffle=!shuffle;$("shuf").querySelector(".tog").classList.toggle("on",shuffle)};
+
+/* QUIZ GAME */
+let deck=[],i=0,score=0,streak=0,answered=false,wrong=[],lastWrong=[],lastSet=[],lastMode="quiz",per={};
+function startQuiz(list){
+  lastMode="quiz"; lastSet=list; deck=shuffle?mix(list):[...list]; i=0;score=0;streak=0;wrong=[];per={};
+  show("game"); ask();
+}
+function ask(){
+  const [r,t,o,a,e,yt]=deck[i]; answered=false;
+  $("cnt").textContent=`${i+1}/${deck.length}`; $("prog").style.width=(i/deck.length*100)+"%";
+  $("rtag").textContent=""; $("pts").textContent=`${score} очк.`; $("stk").textContent=streak>=3?`🔥${streak}`:"";
+  qStop(); const qq=deck[i], useSnd=qq.snd&&apiOk===true;
+  $("qtext").innerHTML=useSnd?qq.qa:t;
+  $("qplay").classList.toggle("hidden",!useSnd); $("qpt").textContent="Слушать";
+  $("ytl").style.display=yt&&!useSnd?"flex":"none";
+  $("ytT").textContent=r==="covers"?"Послушать кавер на YouTube":"Послушать на YouTube";
+  if(yt)$("ytl").href="https://www.youtube.com/results?search_query="+encodeURIComponent(yt);
+  const ord=mix(o.map((x,k)=>k));
+  $("opts").innerHTML=ord.map((k,n)=>`<button class="opt" data-k="${k}"><span class="k">${"ABCD"[n]}</span><span>${o[k]}</span></button>`).join("");
+  $("opts").querySelectorAll(".opt").forEach(b=>b.onclick=()=>pick(+b.dataset.k));
+  $("fb").className="fb"; dock(); window.scrollTo(0,0);
+}
+function pick(k){
+  if(answered)return; answered=true;
+  const q=deck[i],[r,,o,a,e]=q, ok=k===a;
+  per[r]=per[r]||[0,0]; per[r][1]++;
+  if(ok){score++;streak++;per[r][0]++;buzz(20)}else{streak=0;wrong.push(q);buzz([30,60,30])}
+  $("opts").querySelectorAll(".opt").forEach(b=>{b.disabled=true;const n=+b.dataset.k;
+    b.classList.add(n===a?"ok":n===k?"bad":"dim")});
+  $("pts").textContent=`${score} очк.`; $("stk").textContent=streak>=3?`🔥${streak}`:"";
+  const fb=$("fb"); fb.className="fb on "+(ok?"good":"wrong");
+  fb.innerHTML=`<b>${ok?["Точно!","В яблочко!","Верно!","Есть!"][Math.floor(Math.random()*4)]:"Мимо: "+o[a]}</b>${e}${q.snd&&apiOk===true?`<span class="trk">🎵 ${q.snd[0]?q.snd[0]+" — ":""}${q.snd[1]}</span>`:""}`;
+  dock(); setTimeout(()=>fb.scrollIntoView({behavior:"smooth",block:"nearest"}),60);
+}
+function next(){qStop();i++; i<deck.length?ask():finish(score,deck.length,per,wrong)}
+document.addEventListener("keydown",ev=>{
+  if(screen==="game"){ if(!answered&&"1234".includes(ev.key)){const b=$("opts").children[+ev.key-1];b&&b.click()}
+    else if(answered&&(ev.key==="Enter"||ev.key===" ")){ev.preventDefault();next()} }
+  if(screen==="aud"&&ev.key===" "){ev.preventDefault();playClip(true)}
+});
+
+/* END */
+function finish(s,n,pr,wr){
+  lastWrong=wr||[]; const p=n?s/n:0;
+  $("ring").style.background=`conic-gradient(var(--gold) ${p*360}deg,rgba(255,255,255,.1) 0)`;
+  $("ring").innerHTML=`<div style="position:absolute;inset:10px;border-radius:50%;background:var(--bg)"></div><div class="v" style="position:relative">${s}<small>из ${n}</small></div>`;
+  $("verdict").textContent=p>=.85?"Готов забирать первое место 🏆":p>=.65?"Крепкий уровень 🎧":p>=.4?"Неплохо, ещё разок 🎸":"Разогрев засчитан 🎶";
+  const best=store.get("best");
+  if(lastMode==="quiz"&&n>=10&&(!best||s/n>best.s/best.n)){store.set("best",{s,n});$("endBest").textContent="Новый рекорд!"}else $("endBest").textContent="";
+  renderBest();
+  const ks=Object.keys(pr||{}); $("brWrap").style.display=ks.length>1?"":"none";
+  $("br").innerHTML=ks.map(k=>{const[a,b]=pr[k];return `<div class="r"><span>${R[k]}</span><span class="mut">${a}/${b}</span><div class="b"><i style="width:${a/b*100}%"></i></div></div>`}).join("");
+  $("missWrap").style.display=lastWrong.length?"":"none";
+  $("miss").innerHTML=lastWrong.map(q=>`<div>${q[1].replace(/<[^>]+>/g," ").replace(/\s+/g," ")}<b>${q[2][q[3]]}</b></div>`).join("");
+  show("end");
+}
+
+
+
+/* QUIZ AUDIO */
+function qStop(){if(el){try{el.pause()}catch(e){}}const b=$("qplay");if(b){b.classList.remove("on");$("qpi").textContent="▶"}}
+$("qplay").onclick=async()=>{const q=deck[i];if(!q||!q.snd)return;unlock();
+  if($("qplay").classList.contains("on")){qStop();$("qpt").textContent="Слушать";return}
+  $("qpt").textContent="Загружаю…";const tr=q._tr||(q._tr={a:q.snd[0],s:q.snd[1]});await lookup(tr);
+  if(deck[i]!==q||screen!=="game")return;
+  if(!tr.url){$("qpt").textContent=tr.err==="net"?"API не отвечает":"Не нашёл трек";return}
+  try{await elPlay(tr.url,0,1);if(deck[i]!==q||screen!=="game"){el.pause();return}
+    $("qplay").classList.add("on");$("qpi").textContent="■";$("qpt").textContent="Играет · нажми, чтобы остановить";el.onended=()=>{qStop();$("qpt").textContent="Слушать ещё раз"}}
+  catch(e){$("qpt").textContent="Нажми ещё раз"}};
+
+/* COVERS */
+const FILMS=[["The Bodyguard", "Телохранитель"], ["Titanic", "Титаник"], ["Dirty Dancing", "Грязные танцы"], ["Pulp Fiction", "Криминальное чтиво"], ["Grease", "Бриолин"], ["Bohemian Rhapsody", "Богемская рапсодия"], ["Rocketman", "Рокетмен"], ["La La Land", "Ла-Ла Ленд"], ["A Star Is Born", "Звезда родилась"], ["Mamma Mia!", "Мамма Миа!"], ["The Greatest Showman", "Величайший шоумен"], ["Whiplash", "Одержимость"], ["Guardians of the Galaxy", "Стражи Галактики"], ["Top Gun", "Лучший стрелок"], ["Rocky", "Рокки"], ["Ghostbusters", "Охотники за привидениями"], ["Back to the Future", "Назад в будущее"], ["Footloose", "Свободные"], ["Saturday Night Fever", "Лихорадка субботнего вечера"], ["8 Mile", "8 миля"], ["Trainspotting", "На игле"], ["Kill Bill: Vol. 1", "Убить Билла"], ["Interstellar", "Интерстеллар"], ["Inception", "Начало"], ["Gladiator", "Гладиатор"], ["The Lion King", "Король Лев"], ["Frozen", "Холодное сердце"], ["Shrek", "Шрек"], ["Coco", "Тайна Коко"], ["Barbie", "Барби"], ["Elvis", "Элвис"], ["Amadeus", "Амадей"], ["Pretty Woman", "Красотка"], ["Armageddon", "Армагеддон"], ["Skyfall", "007: Координаты «Скайфолл»"], ["Baby Driver", "Малыш на драйве"], ["School of Rock", "Школа рока"], ["Moulin Rouge!", "Мулен Руж!"]];
+const CLIPS=[["Michael Jackson", "Thriller"], ["a-ha", "Take On Me"], ["Queen", "I Want to Break Free"], ["Nirvana", "Smells Like Teen Spirit"], ["Britney Spears", "...Baby One More Time"], ["OK Go", "Here It Goes Again"], ["Lady Gaga", "Bad Romance"], ["Beyoncé", "Single Ladies"], ["PSY", "Gangnam Style"], ["Sia", "Chandelier"], ["Miley Cyrus", "Wrecking Ball"], ["Gotye", "Somebody That I Used to Know"], ["Daft Punk", "Around the World"], ["Fatboy Slim", "Weapon of Choice"], ["Jamiroquai", "Virtual Insanity"], ["The Prodigy", "Firestarter"], ["Guns N' Roses", "November Rain"], ["Madonna", "Vogue"], ["Coldplay", "The Scientist"], ["Red Hot Chili Peppers", "Californication"], ["Eminem", "Without Me"], ["Gorillaz", "Clint Eastwood"], ["Billie Eilish", "bad guy"], ["Childish Gambino", "This Is America"], ["Taylor Swift", "Shake It Off"], ["Katy Perry", "Roar"], ["Adele", "Hello"], ["Robbie Williams", "Rock DJ"], ["Aqua", "Barbie Girl"], ["The White Stripes", "Seven Nation Army"], ["Rammstein", "Du Hast"], ["Kylie Minogue", "Can't Get You Out of My Head"], ["Dua Lipa", "Physical"], ["Lil Nas X", "Old Town Road"], ["Pharrell Williams", "Happy"], ["Peter Gabriel", "Sledgehammer"], ["Dire Straits", "Money for Nothing"], ["Blur", "Coffee & TV"], ["Foo Fighters", "Everlong"], ["Shakira", "Whenever, Wherever"]];
+const INS=[["🎸", "Гитара"], ["🎹", "Клавиши"], ["🎺", "Труба"], ["🎻", "Скрипка"], ["🥁", "Барабан"], ["🎷", "Саксофон"], ["🪕", "Банджо"], ["🪗", "Аккордеон"], ["🎤", "Микрофон"], ["🎧", "Наушники"], ["📯", "Рожок"], ["🔔", "Колокол"], ["📻", "Радиоприёмник"], ["🎙️", "Студийный микрофон"]];
+const CS={alb:"Обложки альбомов",clip:"Клипы",film:"Постеры фильмов",ins:"Силуэты инструментов"};
+const CQ={alb:"Чей это альбом?",clip:"Что это за клип?",film:"Что это за фильм?",ins:"Что это за инструмент?"};
+const CM={sil:"Чёрно-белый силуэт",crop:"Кусочек",blur:"Размытие",pix:"Пиксели"};
+let csOn=new Set(store.get("cs")||["alb","clip","film","ins"]),cmOn=new Set(store.get("cm2")||["sil","crop","blur","pix"]),ccount=20,cdeck=[],ci=0,cscore=0,clevel=0,cans=false,cres=[];
+function cPool(){let p=[];
+  if(csOn.has("alb"))ALB.forEach(x=>p.push({k:"alb",a:x[0],t:x[1],ans:`${x[0]} — ${x[1]}`}));
+  if(csOn.has("clip"))CLIPS.forEach(x=>p.push({k:"clip",a:x[0],t:x[1],ans:`${x[0]} — ${x[1]}`}));
+  if(csOn.has("film"))FILMS.forEach(x=>p.push({k:"film",a:"",t:x[0],ans:x[1]}));
+  if(csOn.has("ins"))INS.forEach(x=>p.push({k:"ins",e:x[0],ans:x[1]}));
+  if(apiOk===false)p=p.filter(x=>x.k==="ins");return p}
+function cRender(){
+  const chips=(id,obj,set,key)=>{$(id).innerHTML=Object.entries(obj).map(([k,n])=>`<button class="chip ${set.has(k)?'on':''}" data-k="${k}">${n}</button>`).join("");
+    $(id).querySelectorAll(".chip").forEach(c=>c.onclick=()=>{const k=c.dataset.k;if(set.has(k)){if(set.size>1)set.delete(k)}else set.add(k);store.set(key,[...set]);cRender()})};
+  chips("csrc",CS,csOn,"cs");chips("cmodes",CM,cmOn,"cm2");
+  $("ccnts").innerHTML=[10,20,46,0].map(n=>`<button class="chip ${ccount===n?'on':''}" data-n="${n}">${n||"Все"}</button>`).join("");
+  $("ccnts").querySelectorAll(".chip").forEach(c=>c.onclick=()=>{ccount=+c.dataset.n;cRender()});
+  dock();
+}
+$("mCov").onclick=()=>{cRender();show("cset");probe().then(ok=>{$("apiWarn3").classList.toggle("hidden",ok);dock()})};
+async function artLookup(al){
+  if(al.art!==undefined)return al;
+  const lw=x=>norm(x).split(" ").filter(w=>w.length>1).sort((p,q)=>q.length-p.length)[0]||norm(x);
+  const aw=norm(al.a).split(" ").filter(w=>w.length>1)[0]||"",tw=lw(al.t),ent={alb:"album",clip:"musicVideo",film:"movie"}[al.k];
+  for(const c of (al.k==="film"?["US","GB"]:["PL","US"])){try{const d=await jsonp(`https://itunes.apple.com/search?term=${encodeURIComponent((al.a+" "+al.t).trim())}&entity=${ent}&limit=15&country=${c}`);
+    const rs=(d.results||[]).filter(r=>r.artworkUrl100),nm=r=>norm(al.k==="alb"?r.collectionName:r.trackName);
+    const hit=al.k==="film"?(rs.find(r=>nm(r)===norm(al.t))||rs.find(r=>nm(r).startsWith(norm(al.t)))):(rs.find(r=>norm(r.artistName).includes(aw)&&nm(r).includes(tw))||(tw.length<3?rs.find(r=>norm(r.artistName).includes(aw)):null));
+    if(hit){al.art=hit.artworkUrl100.replace(/\d+x\d+bb/,"600x600bb");return al}}catch(e){}}
+  al.art=null;return al;
+}
+function cStart(){let p=mix(cPool());if(ccount)p=p.slice(0,ccount);if(!p.length)return;const ms=[...cmOn];
+  cdeck=p.map(x=>({...x,m:x.k==="ins"?"ins":ms[Math.floor(Math.random()*ms.length)],px:Math.random()*100,py:Math.random()*100}));ci=0;cscore=0;cres=[];lastMode="cov";show("cgame");cAsk()}
+const SF=["none","grayscale(1) contrast(400%)","blur(3px) grayscale(1) contrast(3000%)","blur(7px) grayscale(1) contrast(3000%)"];
+const LV={sil:[3,2,1,0],crop:[5,3.2,2,1],blur:[30,16,7,0],pix:[6,12,24,0],ins:[1,0]};
+function cDraw(){const al=cdeck[ci],m=al.m,v=LV[m][clevel],img=$("cimg"),bg=$("cbg"),cv=$("ccv"),x=cv.getContext("2d");
+  if(m==="ins"){bg.style.display=img.style.display="none";cv.style.display="block";cv.style.background="radial-gradient(circle,#f3e9dc,#d9c9b4)";cv.style.imageRendering="auto";
+    x.globalCompositeOperation="source-over";x.clearRect(0,0,320,320);x.font="200px serif";x.textAlign="center";x.textBaseline="middle";x.fillStyle="#000";x.fillText(al.e,160,172);
+    if(v){x.globalCompositeOperation="source-in";x.fillStyle="#0c0c0c";x.fillRect(0,0,320,320);x.globalCompositeOperation="source-over"}return}
+  cv.style.background="none";cv.style.imageRendering="pixelated";
+  bg.style.display=m==="crop"&&v>1?"block":"none";cv.style.display=m==="pix"&&v>0?"block":"none";img.style.display=(m==="blur"||m==="sil"||v===0||v===1)?"block":"none";
+  if(m==="crop"&&v>1){bg.style.backgroundImage=`url("${al.art}")`;bg.style.backgroundSize=`${v*100}%`;bg.style.backgroundPosition=`${al.px}% ${al.py}%`}
+  img.style.filter=m==="sil"?SF[v]:m==="blur"&&v>0?`blur(${v}px)`:"none";
+  if(m==="pix"&&v>0&&img.complete&&img.naturalWidth){x.imageSmoothingEnabled=false;x.clearRect(0,0,320,320);x.drawImage(img,0,0,v,v);x.drawImage(cv,0,0,v,v,0,0,320,320)}
+}
+function cPoolAll(k){return k==="alb"?ALB.map(x=>`${x[0]} — ${x[1]}`):k==="clip"?CLIPS.map(x=>`${x[0]} — ${x[1]}`):k==="film"?FILMS.map(x=>x[1]):INS.map(x=>x[1])}
+async function cAsk(){cans=false;clevel=0;const al=cdeck[ci];
+  $("ccnt").textContent=`${ci+1}/${cdeck.length}`;$("cprog").style.width=(ci/cdeck.length*100)+"%";$("cpts").textContent=`${cscore} очк.`;
+  $("cmode").textContent=al.k==="ins"?"Силуэт":CM[al.m];$("copts").innerHTML="";["cimg","cbg","ccv"].forEach(id=>$(id).style.display="none");dock();
+  const nx=cdeck[ci+1];if(nx&&nx.k!=="ins")artLookup(nx).then(n=>{if(n.art)new Image().src=n.art});
+  if(al.k==="ins"){cDraw();$("cstat").textContent=CQ.ins}
+  else{$("cstat").textContent="Загружаю картинку…";await artLookup(al);if(cdeck[ci]!==al)return;
+    if(!al.art){cdeck.splice(ci,1);if(ci<cdeck.length)cAsk();else finish(cscore,Math.max(1,cdeck.length),{},cres);return}
+    const img=$("cimg");img.onload=()=>{if(cdeck[ci]===al){cDraw();$("cstat").textContent=CQ[al.k]}};img.src=al.art}
+  const others=mix(cPoolAll(al.k).filter(x=>x!==al.ans)).slice(0,3);
+  $("copts").innerHTML=mix([al.ans,...others]).map((o,n)=>`<button class="opt" data-ok="${o===al.ans?1:0}"><span class="k">${"ABCD"[n]}</span><span>${o}</span></button>`).join("");
+  $("copts").querySelectorAll(".opt").forEach(b=>b.onclick=()=>cPick(b));dock();
+}
+function cHint(){if(cans)return;const al=cdeck[ci];if(clevel<LV[al.m].length-2){clevel++;cDraw();dock()}}
+function cPick(b){if(cans)return;cans=true;const al=cdeck[ci],ok=b.dataset.ok==="1";if(ok){cscore++;buzz(20)}else buzz([30,60,30]);
+  $("copts").querySelectorAll(".opt").forEach(x=>{x.disabled=true;x.classList.add(x.dataset.ok==="1"?"ok":x===b?"bad":"dim")});
+  if(!ok)cres.push(["","Мимо:",[al.ans],0]);
+  clevel=LV[al.m].length-1;cDraw();$("cstat").textContent=ok?"Точно!":"Мимо";$("cpts").textContent=`${cscore} очк.`;dock()}
+function cNext(){ci++;ci<cdeck.length?cAsk():finish(cscore,cdeck.length,{},cres)}
+
+/* OWN IMAGES */
+const IM={sil:"Силуэт",crop:"Кусочек",blur:"Размытие",pix:"Пиксели"};
+let imOn=new Set(store.get("im")||["sil","crop","blur","pix"]),imgs=[],idk=[],ii=0,iscore=0,ilevel=0,irev=false;
+function iRender(){$("imodes").innerHTML=Object.entries(IM).map(([k,n])=>`<button class="chip ${imOn.has(k)?'on':''}" data-k="${k}">${n}</button>`).join("");
+  $("imodes").querySelectorAll(".chip").forEach(c=>c.onclick=()=>{const k=c.dataset.k;if(imOn.has(k)){if(imOn.size>1)imOn.delete(k)}else imOn.add(k);store.set("im",[...imOn]);iRender()});dock()}
+$("mImg").onclick=()=>{iRender();show("iset")};
+$("ifiles").onchange=e=>{const add=[...e.target.files].map(f=>({f,name:f.name.replace(/\.[^.]+$/,"").replace(/_/g," "),url:URL.createObjectURL(f)}));imgs=imgs.concat(add);e.target.value="";
+  $("idrop").classList.toggle("has",imgs.length>0);$("idropT").textContent=imgs.length?`${imgs.length} картин. загружено`:"Загрузить картинки";$("idropS").innerHTML=imgs.length?"Нажми, чтобы добавить ещё":"Фото исполнителей, скриншоты клипов, обложки.<br>Ответом будет название файла.";dock()};
+function loadImg(it){return it.el?Promise.resolve(it.el):new Promise(r=>{const im=new Image();im.onload=()=>{it.el=im;r(im)};im.onerror=()=>r(null);im.src=it.url})}
+function silhouette(it){
+  if(it.sil!==undefined)return it.sil;
+  const im=it.el,W=Math.min(640,im.naturalWidth),H=Math.round(im.naturalHeight*W/im.naturalWidth);
+  const c=document.createElement("canvas");c.width=W;c.height=H;const x=c.getContext("2d");x.drawImage(im,0,0,W,H);
+  const d=x.getImageData(0,0,W,H),p=d.data;let transparent=0;for(let k=3;k<p.length;k+=4)if(p[k]<30)transparent++;
+  const mask=new Uint8Array(W*H);
+  if(transparent>W*H*0.05){for(let k=0;k<W*H;k++)mask[k]=p[k*4+3]>40?1:0}
+  else{ // flood-fill background from edges by colour similarity
+    for(let k=0;k<W*H;k++)mask[k]=1;
+    const st=[];const push=(X,Y)=>{if(X>=0&&Y>=0&&X<W&&Y<H){const k=Y*W+X;if(mask[k]){st.push(k)}}};
+    const seeds=[];for(let X=0;X<W;X+=4){seeds.push([X,0],[X,H-1])}for(let Y=0;Y<H;Y+=4){seeds.push([0,Y],[W-1,Y])}
+    const col=k=>[p[k*4],p[k*4+1],p[k*4+2]];
+    const cs=[0,W-1,(H-1)*W,H*W-1].map(col),med=i=>cs.map(c=>c[i]).sort((a,b)=>a-b)[1],ref=[med(0),med(1),med(2)];
+    const near=k=>{const c2=col(k);return Math.abs(c2[0]-ref[0])+Math.abs(c2[1]-ref[1])+Math.abs(c2[2]-ref[2])<=70};
+    for(const [sx,sy] of seeds){const k0=sy*W+sx;if(!mask[k0]||!near(k0))continue;st.length=0;st.push(k0);
+      while(st.length){const k=st.pop();if(!mask[k])continue;const c2=col(k);if(Math.abs(c2[0]-ref[0])+Math.abs(c2[1]-ref[1])+Math.abs(c2[2]-ref[2])>70)continue;mask[k]=0;const X=k%W,Y=(k/W)|0;push(X+1,Y);push(X-1,Y);push(X,Y+1);push(X,Y-1)}}
+  }
+  let fg=0;for(let k=0;k<W*H;k++)fg+=mask[k];
+  if(fg<W*H*0.03||fg>W*H*0.97){it.sil=null;return null}
+  for(let k=0;k<W*H;k++){p[k*4]=p[k*4+1]=p[k*4+2]=12;p[k*4+3]=mask[k]?255:0}
+  x.putImageData(d,0,0);it.sil=c;return c;
+}
+function fit(cv,src,sw,sh){const x=cv.getContext("2d"),S=cv.width,r=Math.min(S/sw,S/sh),w=sw*r,h=sh*r;x.drawImage(src,0,0,sw,sh,(S-w)/2,(S-h)/2,w,h)}
+const ILV={sil:[0],crop:[5,3.2,2,1],blur:[30,16,7,0],pix:[8,16,32,0]};
+function iDraw(){const it=idk[ii],cv=$("icv"),x=cv.getContext("2d"),S=cv.width,im=it.el;x.clearRect(0,0,S,S);x.filter="none";x.imageSmoothingEnabled=true;
+  $("ibox").classList.toggle("dark",it.m!=="sil"||irev);
+  if(irev){fit(cv,im,im.naturalWidth,im.naturalHeight);return}
+  const v=ILV[it.m][ilevel];
+  if(it.m==="sil"){const s=it.sil;fit(cv,s,s.width,s.height);return}
+  if(it.m==="crop"){const cw=im.naturalWidth/v,ch=im.naturalHeight/v,sx=(im.naturalWidth-cw)*it.px,sy=(im.naturalHeight-ch)*it.py;const r=Math.max(S/cw,S/ch);x.drawImage(im,sx,sy,cw,ch,(S-cw*r)/2,(S-ch*r)/2,cw*r,ch*r);return}
+  if(it.m==="blur"){x.filter=v?`blur(${v}px)`:"none";fit(cv,im,im.naturalWidth,im.naturalHeight);x.filter="none";return}
+  if(it.m==="pix"){if(!v){fit(cv,im,im.naturalWidth,im.naturalHeight);return}const t=document.createElement("canvas");t.width=v;t.height=Math.max(1,Math.round(v*im.naturalHeight/im.naturalWidth));t.getContext("2d").drawImage(im,0,0,t.width,t.height);x.imageSmoothingEnabled=false;fit(cv,t,t.width,t.height)}
+}
+async function iStart(){if(!imgs.length)return;lastMode="img";idk=[];
+  for(const it of mix(imgs)){await loadImg(it);if(!it.el)continue;let ms=[...imOn];if(ms.includes("sil")&&!silhouette(it))ms=ms.filter(m=>m!=="sil");if(!ms.length)ms=["blur"];
+    idk.push(Object.assign(it,{m:ms[Math.floor(Math.random()*ms.length)],px:Math.random(),py:Math.random()}))}
+  ii=0;iscore=0;show("igame");iAsk()}
+function iAsk(){irev=false;ilevel=0;const it=idk[ii];$("icnt").textContent=`${ii+1}/${idk.length}`;$("iprog").style.width=(ii/idk.length*100)+"%";
+  $("ipts").textContent=`${iscore} очк.`;$("imode").textContent=IM[it.m];$("ians").textContent="";iDraw();dock()}
+function iHint(){const it=idk[ii];if(ilevel<ILV[it.m].length-2){ilevel++;iDraw();dock()}}
+function iReveal(){irev=true;iDraw();$("ians").textContent=idk[ii].name;dock()}
+function iJudge(ok){if(ok){iscore++;buzz(20)}ii++;ii<idk.length?iAsk():finish(iscore,idk.length,{},[])}
+
+/* KARAOKE */
+const KP={
+ uaby:{n:"Украинские и белорусские песни",t:[["Обійми","Океан Ельзи"],["Без бою","Океан Ельзи"],["Там, де нас нема","Океан Ельзи"],["Відпусти","Океан Ельзи"],["Старі фотографії","Скрябін"],["Весна","Воплі Відоплясова"],["Вахтерам","Бумбокс"],["Плакала","KAZKA"],["Шум","Go_A"],["Дикі танці","Руслана"],["Журавлі","The Hardkiss"],["Тримай","Христина Соловій"],["Рибка","alyona alyona"],["Воины света","Ляпис Трубецкой"],["Капиталист","Ляпис Трубецкой"],["Евпатория","Ляпис Трубецкой"],["Родны край","Brutto"],["Гісторыя майго жыцця","Naviband"],["Беловежская пуща","Песняры"],["Вологда","Песняры"],["Ніч яка місячна","украинская народная"],["Червона рута","Владимир Ивасюк"]]},
+ ru:{n:"Старый русский рок и поп",t:[["Лирика","Сектор Газа"],["Пора домой","Сектор Газа"],["Туман","Сектор Газа"],["Ява","Сектор Газа"],["Группа крови","Кино"],["Звезда по имени Солнце","Кино"],["Кукушка","Кино"],["Пачка сигарет","Кино"],["Хочу перемен","Кино"],["Восьмиклассница","Кино"],["Что такое осень","ДДТ"],["Это всё","ДДТ"],["Я хочу быть с тобой","Наутилус Помпилиус"],["Скованные одной цепью","Наутилус Помпилиус"],["Прогулки по воде","Наутилус Помпилиус"],["Беспечный ангел","Ария"],["Штиль","Ария"],["Лесник","Король и Шут"],["Кукла колдуна","Король и Шут"],["Прыгну со скалы","Король и Шут"],["Аргентина — Ямайка 5:0","Чайф"],["Выхода нет","Сплин"],["Романс","Сплин"],["Полковнику никто не пишет","Би-2"],["Утекай","Мумий Тролль"],["Владивосток 2000","Мумий Тролль"],["Хочешь?","Земфира"],["Ромашки","Земфира"],["Искала","Земфира"],["Крошка моя","Руки Вверх!"],["Как на войне","Агата Кристи"],["Сказочная тайга","Агата Кристи"],["Поворот","Машина времени"],["Однажды мир прогнётся под нас","Машина времени"],["Миллион алых роз","Алла Пугачёва"],["Айсберг","Алла Пугачёва"],["Белые розы","Ласковый май"],["Районы-кварталы","Звери"],["Музыка нас связала","Мираж"],["Лондон, гудбай","Кар-Мэн"],["Седьмой лепесток","Hi-Fi"],["Половинка","Танцы Минус"],["31-я весна","Ночные снайперы"]]},
+ intl:{n:"Зарубежные хиты",t:[["Bohemian Rhapsody","Queen"],["Smells Like Teen Spirit","Nirvana"],["Billie Jean","Michael Jackson"],["Hotel California","Eagles"],["Stairway to Heaven","Led Zeppelin"],["Sweet Child O' Mine","Guns N' Roses"],["Wonderwall","Oasis"],["Rolling in the Deep","Adele"],["Shape of You","Ed Sheeran"],["Blinding Lights","The Weeknd"],["Bad Romance","Lady Gaga"],["Umbrella","Rihanna"],["Dancing Queen","ABBA"],["Livin' on a Prayer","Bon Jovi"],["Nothing Else Matters","Metallica"],["Wind of Change","Scorpions"],["Take On Me","a-ha"],["Africa","Toto"],["Uptown Funk","Mark Ronson ft. Bruno Mars"],["Crazy in Love","Beyoncé"],["Seven Nation Army","The White Stripes"],["Highway to Hell","AC/DC"],["Another Brick in the Wall","Pink Floyd"],["I Will Survive","Gloria Gaynor"],["Wake Me Up","Avicii"],["Smooth Criminal","Michael Jackson"]]}
+};
+const KM={cons:"Только согласные",vow:"Только гласные",word:"Пропущенное слово",first:"Первые буквы",scr:"Слова наоборот"};
+const VW="аеёиоуыэюяєіїaeiouyАЕЁИОУЫЭЮЯЄІЇAEIOUY";
+const isL=c=>/\p{L}/u.test(c), isV=c=>VW.includes(c);
+function enc(text,m){
+  if(m==="cons")return [...text].map(c=>isL(c)&&isV(c)?"":c).join("").replace(/\s+/g," ").trim()||text;
+  if(m==="vow")return [...text].map(c=>isL(c)&&!isV(c)?"·":c).join("");
+  if(m==="first")return text.split(/\s+/).map(w=>{const ch=[...w];const i=ch.findIndex(isL);return i<0?w:ch.slice(0,i+1).join("")+ch.slice(i+1).map(c=>isL(c)?"_":c).join("")}).join("  ");
+  if(m==="scr")return text.split(/\s+/).map(w=>[...w].reverse().join("")).join(" ");
+  if(m==="word"){const ws=text.split(/\s+/);const cand=ws.map((w,i)=>[...w].filter(isL).length>=3?i:-1).filter(i=>i>=0);
+    if(ws.length<2||!cand.length)return enc(text,"first");const k=cand[Math.floor(Math.random()*cand.length)];
+    return ws.map((w,i)=>i===k?"_".repeat(Math.max(3,[...w].filter(isL).length)):w).join(" ")}
+  return text;
+}
+let kOn=new Set(store.get("kp")||["uaby","ru"]),kmOn=new Set(store.get("km")||["cons","vow","word","first"]),kdeck=[],ki=0,kscore=0,krev=false,kres=[];
+function kRender(){
+  const own=ownLines();
+  $("kpacks").innerHTML=Object.entries(KP).map(([k,p])=>`<button class="item ${kOn.has(k)?'on':''}" data-k="${k}"><span class="ck">${kOn.has(k)?'✓':''}</span><span class="nm">${p.n}</span><span class="ct">${p.t.length}</span></button>`).join("")
+   +`<button class="item ${kOn.has("own")?'on':''}" data-k="own"><span class="ck">${kOn.has("own")?'✓':''}</span><span class="nm">Мои строчки</span><span class="ct">${own.length}</span></button>`;
+  $("kpacks").querySelectorAll(".item").forEach(el=>el.onclick=()=>{const k=el.dataset.k;kOn.has(k)?kOn.delete(k):kOn.add(k);store.set("kp",[...kOn]);kRender()});
+  $("kmodes").innerHTML=Object.entries(KM).map(([k,n])=>`<button class="chip ${kmOn.has(k)?'on':''}" data-k="${k}">${n}</button>`).join("");
+  $("kmodes").querySelectorAll(".chip").forEach(c=>c.onclick=()=>{const k=c.dataset.k;if(kmOn.has(k)){if(kmOn.size>1)kmOn.delete(k)}else kmOn.add(k);store.set("km",[...kmOn]);kRender()});
+  dock();
+}
+function ownLines(){return ($("kown").value||"").split("\n").map(l=>l.trim()).filter(Boolean).map(l=>{const p=l.split("|");return {text:p[0].trim(),ans:(p[1]||"").trim(),own:true}})}
+$("kown").value=store.get("kown")||"";
+$("kown").oninput=()=>{store.set("kown",$("kown").value);if($("kown").value.trim()&&!kOn.has("own")){kOn.add("own")}kRender()};
+function kPool(){let p=[];Object.keys(KP).forEach(k=>{if(kOn.has(k))KP[k].t.forEach(t=>p.push({text:t[0],ans:t[1],pack:k}))});if(kOn.has("own"))p=p.concat(ownLines());return p}
+$("mKar").onclick=()=>{kSrcRender();kRender();show("kset");probe().then(ok=>$("apiWarn2").classList.toggle("hidden",ok))};
+let kSrc=store.get("ksrc")||"lines";
+function kSrcRender(){$("ksrc").innerHTML=[["lines","Строчки из песен"],["titles","Названия песен"]].map(([k,n])=>`<button class="chip ${kSrc===k?'on':''}" data-k="${k}">${n}</button>`).join("");
+  $("ksrc").querySelectorAll(".chip").forEach(c=>c.onclick=()=>{kSrc=c.dataset.k;store.set("ksrc",kSrc);kSrcRender()})}
+function pickMode(text,ms){let m=ms[Math.floor(Math.random()*ms.length)];if(m==="word"&&(text.split(/\s+/).length<2||!text.split(/\s+/).some(w=>[...w].filter(isL).length>=3)))m=ms.find(x=>x!=="word")||"first";return m}
+async function fetchLine(t){
+  if(t.line!==undefined)return t;
+  const tries=[`https://lrclib.net/api/search?track_name=${encodeURIComponent(t.text)}&artist_name=${encodeURIComponent(t.ans)}`,`https://lrclib.net/api/search?q=${encodeURIComponent(t.ans+" "+t.text)}`];
+  for(const u of tries){try{const r=await fetch(u);if(!r.ok)continue;const d=await r.json();
+    const hit=(d||[]).find(x=>x.plainLyrics&&!x.instrumental);
+    if(hit){const ls=[...new Set(hit.plainLyrics.split("\n").map(x=>x.trim()))].filter(x=>x.length>=14&&x.length<=70&&!/[\[\]()]/.test(x)&&x.split(/\s+/).length>=3&&norm(x)!==norm(t.text));
+      if(ls.length){t.line=ls[Math.floor(Math.random()*ls.length)];return t}}}catch(e){}}
+  t.line=null;return t;
+}
+function kStart(){const p=mix(kPool()).slice(0,46);if(!p.length)return;const ms=[...kmOn];
+  kdeck=p.map(t=>({...t,lyr:kSrc==="lines"&&!t.own,ms}));ki=0;kscore=0;kres=[];lastMode="kar";show("kgame");kAsk()}
+async function kAsk(){const t=kdeck[ki];krev=false;
+  $("kcnt").textContent=`${ki+1}/${kdeck.length}`;$("kprog").style.width=(ki/kdeck.length*100)+"%";$("kpts").textContent=`${kscore} очк.`;$("kans").innerHTML="";
+  const nx=kdeck[ki+1];if(nx&&nx.lyr)fetchLine(nx);
+  if(t.lyr&&t.line===undefined){$("kmode").textContent="";$("kq").textContent="…";$("khint").textContent="Загружаю строчку";dock();await fetchLine(t);if(kdeck[ki]!==t)return}
+  const src=t.lyr&&t.line?t.line:t.text;
+  if(!t.e){t.m=pickMode(src,t.ms);t.e=enc(src,t.m)}
+  $("kmode").textContent=KM[t.m];$("kq").textContent=t.e;
+  $("khint").textContent=t.own?"Строчка из песни":t.lyr&&t.line?"Строчка из песни · назови песню":t.lyr?"Строчку не нашёл — это название песни":"Название песни";
+  dock()}
+function kReveal(){const t=kdeck[ki];krev=true;
+  $("kans").innerHTML=t.lyr&&t.line?`${t.text}<small>${t.ans}</small><div class="kline">«${t.line}»</div>`:`${t.text}${t.ans?`<small>${t.ans}</small>`:""}`;dock()}
+function kJudge(ok){if(ok)kscore++;kres.push(ok);ki++;ki<kdeck.length?kAsk():finish(kscore,kdeck.length,{},[])}
+
+const PL={
+ p80:{n:"Хиты 80-х",t:[["a-ha","Take On Me"],["Michael Jackson","Billie Jean"],["Queen","Another One Bites the Dust"],["Bon Jovi","Livin' on a Prayer"],["Europe","The Final Countdown"],["Toto","Africa"],["Cyndi Lauper","Girls Just Want to Have Fun"],["Survivor","Eye of the Tiger"],["Modern Talking","Cheri Cheri Lady"],["Whitney Houston","I Wanna Dance with Somebody"]]},
+ p90:{n:"Хиты 90-х",t:[["Nirvana","Smells Like Teen Spirit"],["Haddaway","What Is Love"],["Backstreet Boys","I Want It That Way"],["Britney Spears","...Baby One More Time"],["Red Hot Chili Peppers","Californication"],["Spice Girls","Wannabe"],["The Cranberries","Zombie"],["Coolio","Gangsta's Paradise"],["Eiffel 65","Blue (Da Ba Dee)"],["Aqua","Barbie Girl"]]},
+ p00:{n:"Хиты 2000-х",t:[["Eminem","Lose Yourself"],["Beyoncé","Crazy in Love"],["The Killers","Mr. Brightside"],["Rihanna","Umbrella"],["Gnarls Barkley","Crazy"],["Lady Gaga","Poker Face"],["OutKast","Hey Ya!"],["Linkin Park","In the End"],["Shakira","Hips Don't Lie"],["Black Eyed Peas","I Gotta Feeling"]]},
+ p10:{n:"2010-е и новее",t:[["Adele","Rolling in the Deep"],["Pharrell Williams","Happy"],["Mark Ronson","Uptown Funk"],["Ed Sheeran","Shape of You"],["The Weeknd","Blinding Lights"],["Billie Eilish","bad guy"],["Dua Lipa","Levitating"],["Imagine Dragons","Believer"],["Harry Styles","As It Was"],["Miley Cyrus","Flowers"]]},
+ uaby:{n:"Украина и Беларусь",t:[["Okean Elzy","Обійми"],["Kalush Orchestra","Stefania"],["Jamala","1944"],["Go_A","Shum"],["KAZKA","Плакала"],["The Hardkiss","Журавлі"],["Jerry Heil","Teresa & Maria"],["Ruslana","Wild Dances"],["Verka Serduchka","Dancing Lasha Tumbai"],["Lyapis Trubetskoy","Воины света"],["Naviband","Historyja majho žyccia"],["DakhaBrakha","Vesna"],["Tvorchi","Heart of Steel"],["ONUKA","Vidlik"]]},
+ film:{n:"🎬 Саундтреки фильмов",q:"Откуда эта музыка?",xl:"Фильм",t:[["Hans Zimmer","Time","Начало (Inception)"],["Hans Zimmer","Cornfield Chase","Интерстеллар"],["John Williams","Hedwig's Theme","Гарри Поттер"],["John Williams","Star Wars Main Title","Звёздные войны"],["John Williams","Theme From Jurassic Park","Парк юрского периода"],["Klaus Badelt","He's a Pirate","Пираты Карибского моря"],["Howard Shore","Concerning Hobbits","Властелин колец"],["Ennio Morricone","The Good, the Bad and the Ugly","Хороший, плохой, злой"],["Bill Conti","Gonna Fly Now","Рокки"],["Kenny Loggins","Danger Zone","Лучший стрелок"],["Ray Parker Jr.","Ghostbusters","Охотники за привидениями"],["Dick Dale","Misirlou","Криминальное чтиво"],["Bee Gees","Stayin' Alive","Лихорадка субботнего вечера"],["Céline Dion","My Heart Will Go On","Титаник"],["Billie Eilish","What Was I Made For?","Барби"],["Vangelis","Chariots of Fire","Огненные колесницы"]]},
+ tv:{n:"📺 Заставки сериалов",q:"Откуда эта музыка?",xl:"Сериал",t:[["Ramin Djawadi","Game of Thrones Main Title","Игра престолов"],["The Rembrandts","I'll Be There for You","Друзья"],["Kyle Dixon","Stranger Things","Очень странные дела"],["Danny Elfman","The Simpsons Theme","Симпсоны"],["Mark Snow","The X-Files","Секретные материалы"],["Dave Porter","Breaking Bad Main Title Theme","Во все тяжкие"],["Angelo Badalamenti","Twin Peaks Theme","Твин Пикс"],["Nicholas Britell","Succession Main Title Theme","Наследники"],["Will Smith","The Fresh Prince of Bel-Air","Принц из Беверли-Хиллз"],["Nick Cave","Red Right Hand","Острые козырьки"],["The Cramps","Goo Goo Muck","Уэнсдей (танец)"],["Imagine Dragons","Enemy","Аркейн"],["Sonya Belousova","Toss a Coin to Your Witcher","Ведьмак (сериал)"],["Jung Jae Il","Way Back Then","Игра в кальмара"],["Manu Pilas","Bella Ciao","Бумажный дом"]]},
+ game:{n:"🎮 Музыка из игр",q:"Откуда эта музыка?",xl:"Игра",t:[["","Super Mario Bros Theme","Super Mario Bros."],["","Tetris Theme Korobeiniki","Тетрис"],["C418","Sweden","Minecraft"],["Jeremy Soule","Dragonborn","Skyrim"],["Marcin Przybyłowicz","The Trail","Ведьмак 3"],["Mick Gordon","BFG Division","DOOM (2016)"],["Toby Fox","Megalovania","Undertale"],["Gustavo Santaolalla","The Last of Us","The Last of Us"],["Against the Current","Legends Never Die","League of Legends"],["Jonathan Coulton","Still Alive","Portal"],["Michael Hunter","San Andreas Theme","GTA: San Andreas"],["Nobuo Uematsu","One-Winged Angel","Final Fantasy VII"]]},
+ cov:{n:"Каверы → угадай оригинал",q:"Чей это оригинал?",xl:"Оригинал",t:[["Johnny Cash","Hurt","Nine Inch Nails"],["Gary Jules","Mad World","Tears for Fears"],["Jeff Buckley","Hallelujah","Leonard Cohen"],["Soft Cell","Tainted Love","Gloria Jones"],["Whitney Houston","I Will Always Love You","Dolly Parton"],["Alien Ant Farm","Smooth Criminal","Michael Jackson"],["Disturbed","The Sound of Silence","Simon & Garfunkel"],["Mark Ronson","Valerie","The Zutons"],["The Jimi Hendrix Experience","All Along the Watchtower","Bob Dylan"],["UB40","Red Red Wine","Neil Diamond"],["Natalie Imbruglia","Torn","Ednaswap"],["Sinéad O'Connor","Nothing Compares 2 U","Prince"]]}
+};
+Object.assign(PL,{"p70": {"n": "Хиты 70-х", "t": [["ABBA", "Mamma Mia"], ["Queen", "Bohemian Rhapsody"], ["Bee Gees", "Night Fever"], ["Gloria Gaynor", "I Will Survive"], ["Boney M.", "Rasputin"], ["Boney M.", "Daddy Cool"], ["Village People", "Y.M.C.A."], ["Eagles", "Hotel California"], ["Led Zeppelin", "Stairway to Heaven"], ["Fleetwood Mac", "Dreams"], ["Donna Summer", "I Feel Love"], ["Elton John", "Rocket Man"], ["Earth, Wind & Fire", "September"], ["David Bowie", "Heroes"], ["Electric Light Orchestra", "Mr. Blue Sky"], ["The Clash", "London Calling"], ["Blondie", "Heart of Glass"], ["Chic", "Le Freak"], ["Pink Floyd", "Another Brick in the Wall"], ["Deep Purple", "Smoke on the Water"]]}, "p80b": {"n": "Ещё 80-е", "t": [["Madonna", "Like a Prayer"], ["Prince", "Purple Rain"], ["Tears for Fears", "Everybody Wants to Rule the World"], ["Dire Straits", "Money for Nothing"], ["Duran Duran", "Hungry Like the Wolf"], ["Rick Astley", "Never Gonna Give You Up"], ["Wham!", "Wake Me Up Before You Go-Go"], ["Depeche Mode", "Enjoy the Silence"], ["Pet Shop Boys", "West End Girls"], ["Kim Wilde", "Kids in America"], ["Eurythmics", "Sweet Dreams"], ["George Michael", "Careless Whisper"], ["Phil Collins", "In the Air Tonight"], ["Guns N' Roses", "Sweet Child O' Mine"], ["Michael Jackson", "Beat It"], ["Bonnie Tyler", "Total Eclipse of the Heart"], ["Modern Talking", "You're My Heart, You're My Soul"], ["Sandra", "Maria Magdalena"], ["C.C. Catch", "I Can Lose My Heart Tonight"], ["Roxette", "The Look"]]}, "p90b": {"n": "Ещё 90-е", "t": [["Oasis", "Wonderwall"], ["Ace of Base", "All That She Wants"], ["Dr. Alban", "It's My Life"], ["2 Unlimited", "No Limit"], ["Scatman John", "Scatman"], ["Spice Girls", "Say You'll Be There"], ["TLC", "No Scrubs"], ["Fugees", "Killing Me Softly with His Song"], ["Alanis Morissette", "Ironic"], ["No Doubt", "Don't Speak"], ["Celine Dion", "My Heart Will Go On"], ["Lou Bega", "Mambo No. 5"], ["Ricky Martin", "Livin' la Vida Loca"], ["Cher", "Believe"], ["Vengaboys", "Boom, Boom, Boom, Boom!!"], ["Blur", "Song 2"], ["Radiohead", "Creep"], ["Metallica", "Nothing Else Matters"], ["Mariah Carey", "Fantasy"], ["Snap!", "Rhythm Is a Dancer"]]}, "p00b": {"n": "Ещё 2000-е", "t": [["Britney Spears", "Toxic"], ["Nelly Furtado", "Promiscuous"], ["Amy Winehouse", "Rehab"], ["Justin Timberlake", "SexyBack"], ["Gorillaz", "Feel Good Inc."], ["Coldplay", "Viva la Vida"], ["Kanye West", "Stronger"], ["50 Cent", "In da Club"], ["Usher", "Yeah!"], ["Christina Aguilera", "Genie in a Bottle"], ["Avril Lavigne", "Complicated"], ["Sean Paul", "Get Busy"], ["Shakira", "Whenever, Wherever"], ["Kylie Minogue", "Can't Get You Out of My Head"], ["Las Ketchup", "The Ketchup Song (Aserejé)"], ["O-Zone", "Dragostea Din Tei"], ["Evanescence", "Bring Me to Life"], ["Green Day", "Boulevard of Broken Dreams"], ["Kings of Leon", "Sex on Fire"], ["MGMT", "Kids"]]}, "p10b": {"n": "Ещё 2010-е", "t": [["Gotye", "Somebody That I Used to Know"], ["Carly Rae Jepsen", "Call Me Maybe"], ["PSY", "Gangnam Style"], ["Avicii", "Wake Me Up"], ["Daft Punk", "Get Lucky"], ["Lorde", "Royals"], ["Sia", "Chandelier"], ["Luis Fonsi", "Despacito"], ["Lady Gaga", "Bad Romance"], ["Katy Perry", "Firework"], ["Bruno Mars", "Just the Way You Are"], ["LMFAO", "Party Rock Anthem"], ["Arctic Monkeys", "Do I Wanna Know?"], ["Hozier", "Take Me to Church"], ["Lewis Capaldi", "Someone You Loved"], ["Post Malone", "Circles"], ["Stromae", "Papaoutai"], ["Tones and I", "Dance Monkey"], ["Lil Nas X", "Old Town Road"], ["Twenty One Pilots", "Stressed Out"]]}, "p20": {"n": "2020-е", "t": [["Dua Lipa", "Don't Start Now"], ["Olivia Rodrigo", "drivers license"], ["Glass Animals", "Heat Waves"], ["Måneskin", "Beggin'"], ["Lil Nas X", "MONTERO (Call Me By Your Name)"], ["Doja Cat", "Say So"], ["Sabrina Carpenter", "Espresso"], ["Benson Boone", "Beautiful Things"], ["Chappell Roan", "Good Luck, Babe!"], ["Lady Gaga", "Die With a Smile"], ["Billie Eilish", "Birds of a Feather"], ["Kendrick Lamar", "Not Like Us"], ["Tate McRae", "greedy"], ["Teddy Swims", "Lose Control"], ["ROSÉ", "APT."], ["Taylor Swift", "Anti-Hero"], ["SZA", "Kill Bill"], ["The Kid LAROI", "Stay"], ["Alex Warren", "Ordinary"], ["HUNTR/X", "Golden"]]}, "rock": {"n": "Рок", "t": [["AC/DC", "Highway to Hell"], ["AC/DC", "Back in Black"], ["Metallica", "Enter Sandman"], ["The Rolling Stones", "(I Can't Get No) Satisfaction"], ["Scorpions", "Wind of Change"], ["Bon Jovi", "It's My Life"], ["Queen", "We Will Rock You"], ["Nirvana", "Come as You Are"], ["Rammstein", "Du Hast"], ["System of a Down", "Chop Suey!"], ["Linkin Park", "Numb"], ["The White Stripes", "Seven Nation Army"], ["Red Hot Chili Peppers", "Can't Stop"], ["Foo Fighters", "Everlong"], ["Muse", "Uprising"], ["Green Day", "Basket Case"], ["The Offspring", "The Kids Aren't Alright"], ["Aerosmith", "Dream On"], ["Guns N' Roses", "November Rain"], ["The Killers", "Somebody Told Me"], ["Rage Against the Machine", "Killing in the Name"], ["Pearl Jam", "Alive"], ["U2", "With or Without You"], ["Bon Jovi", "Livin' on a Prayer"]]}, "hip": {"n": "Хип-хоп", "t": [["2Pac", "California Love"], ["Dr. Dre", "Still D.R.E."], ["Eminem", "Without Me"], ["Eminem", "The Real Slim Shady"], ["Jay-Z", "Empire State of Mind"], ["Kendrick Lamar", "HUMBLE."], ["Drake", "Hotline Bling"], ["Travis Scott", "SICKO MODE"], ["Snoop Dogg", "Drop It Like It's Hot"], ["OutKast", "Ms. Jackson"], ["The Notorious B.I.G.", "Juicy"], ["Cypress Hill", "Insane in the Brain"], ["House of Pain", "Jump Around"], ["Missy Elliott", "Get Ur Freak On"], ["Nelly", "Hot in Herre"], ["Kanye West", "Gold Digger"], ["Coolio", "Gangsta's Paradise"], ["Cardi B", "Bodak Yellow"], ["Run-DMC", "It's Tricky"], ["Beastie Boys", "Sabotage"]]}, "dance": {"n": "Танцевальная и электроника", "t": [["Daft Punk", "One More Time"], ["Avicii", "Levels"], ["Calvin Harris", "Summer"], ["David Guetta", "Titanium"], ["Swedish House Mafia", "Don't You Worry Child"], ["Eric Prydz", "Call on Me"], ["Benny Benassi", "Satisfaction"], ["Darude", "Sandstorm"], ["Alice Deejay", "Better Off Alone"], ["Bob Sinclar", "Love Generation"], ["Stardust", "Music Sounds Better with You"], ["Kygo", "Firestone"], ["Martin Garrix", "Animals"], ["Gala", "Freed from Desire"], ["Corona", "The Rhythm of the Night"], ["Scooter", "How Much Is the Fish?"], ["Robert Miles", "Children"], ["Faithless", "Insomnia"], ["ATB", "9 PM (Till I Come)"], ["The Prodigy", "Firestarter"], ["Fatboy Slim", "Right Here, Right Now"], ["Mr. Oizo", "Flat Beat"], ["Kaoma", "Lambada"], ["Los del Rio", "Macarena"]]}, "euro": {"n": "Евровидение", "t": [["ABBA", "Waterloo"], ["Loreen", "Euphoria"], ["Loreen", "Tattoo"], ["Måneskin", "Zitti e buoni"], ["Lordi", "Hard Rock Hallelujah"], ["Netta", "Toy"], ["Duncan Laurence", "Arcade"], ["Nemo", "The Code"], ["Alexander Rybak", "Fairytale"], ["Conchita Wurst", "Rise Like a Phoenix"], ["Måns Zelmerlöw", "Heroes"], ["Käärijä", "Cha Cha Cha"], ["Salvador Sobral", "Amar pelos dois"], ["Lena", "Satellite"], ["Emmelie de Forest", "Only Teardrops"], ["Baby Lasagna", "Rim Tim Tagi Dim"], ["JJ", "Wasted Love"], ["Mahmood", "Soldi"], ["Marija Šerifović", "Molitva"], ["Kalush Orchestra", "Stefania"]]}, "pl": {"n": "Польская сцена", "t": [["Dawid Podsiadło", "Małomiasteczkowy"], ["sanah", "Szampan"], ["Myslovitz", "Długość dźwięku samotności"], ["Perfect", "Autobiografia"], ["Lady Pank", "Mniej niż zero"], ["Budka Suflera", "Jolka, Jolka pamiętasz"], ["Maanam", "Kocham cię, kochanie moje"], ["Kult", "Arahja"], ["Taco Hemingway", "Deszcz na betonie"], ["Kwiat Jabłoni", "Dziś późno pójdę spać"], ["Czesław Niemen", "Dziwny jest ten świat"], ["Blanka", "Solo"], ["Dżem", "Wehikuł czasu"], ["Republika", "Biała flaga"], ["Krzysztof Krawczyk", "Parostatek"], ["Edyta Górniak", "To nie ja!"], ["Doda", "Nie daj się"], ["Mrozu", "Złoty środek"], ["Daria Zawiałow", "Kinga"], ["Ralph Kamiński", "Kosmiczne energie"]]}, "cart": {"n": "Мультфильмы", "t": [["Idina Menzel", "Let It Go", "Холодное сердце"], ["Carmen Twillie", "Circle of Life", "Король Лев"], ["Nathan Lane", "Hakuna Matata", "Король Лев"], ["Samuel E. Wright", "Under the Sea", "Русалочка"], ["Brad Kane", "A Whole New World", "Аладдин"], ["Randy Newman", "You've Got a Friend in Me", "История игрушек"], ["Smash Mouth", "All Star", "Шрек"], ["Counting Crows", "Accidentally in Love", "Шрек 2"], ["Auli'i Cravalho", "How Far I'll Go", "Моана"], ["", "We Don't Talk About Bruno", "Энканто"], ["Shakira", "Try Everything", "Зверополис"], ["Anthony Gonzalez", "Remember Me", "Тайна Коко"], ["Justin Timberlake", "Can't Stop the Feeling!", "Тролли"], ["Pharrell Williams", "Happy", "Гадкий я 2"], ["HUNTR/X", "Golden", "K-pop-охотницы на демонов"], ["Phil Collins", "You'll Be in My Heart", "Тарзан"], ["Dwayne Johnson", "You're Welcome", "Моана"], ["Elton John", "Can You Feel the Love Tonight", "Король Лев"]], "q": "Из какого мультфильма?", "xl": "Мультфильм"}, "duets": {"n": "Дуэты", "t": [["Queen", "Under Pressure"], ["Lady Gaga", "Shallow"], ["Kenny Rogers", "Islands in the Stream"], ["Elton John", "Don't Go Breaking My Heart"], ["Eminem", "Love the Way You Lie"], ["Beyoncé", "Beautiful Liar"], ["Nelly", "Dilemma"], ["Shawn Mendes", "Señorita"], ["Rihanna", "Umbrella"], ["Bill Medley", "(I've Had) The Time of My Life"], ["Andrea Bocelli", "Time to Say Goodbye"], ["Run-DMC", "Walk This Way"], ["Ed Sheeran", "Perfect Duet"], ["Justin Bieber", "Love Yourself"], ["Calvin Harris", "This Is What You Came For"], ["Post Malone", "Sunflower"]]}, "xmas": {"n": "Новогодние и рождественские", "t": [["Mariah Carey", "All I Want for Christmas Is You"], ["Wham!", "Last Christmas"], ["Bobby Helms", "Jingle Bell Rock"], ["José Feliciano", "Feliz Navidad"], ["ABBA", "Happy New Year"], ["Chris Rea", "Driving Home for Christmas"], ["Ariana Grande", "Santa Tell Me"], ["Brenda Lee", "Rockin' Around the Christmas Tree"], ["Bing Crosby", "White Christmas"], ["The Pogues", "Fairytale of New York"], ["Shakin' Stevens", "Merry Christmas Everyone"], ["John Lennon", "Happy Xmas (War Is Over)"], ["Paul McCartney", "Wonderful Christmastime"], ["Band Aid", "Do They Know It's Christmas?"], ["Michael Bublé", "It's Beginning to Look a Lot Like Christmas"], ["Kelly Clarkson", "Underneath the Tree"], ["Justin Bieber", "Mistletoe"], ["Frank Sinatra", "Let It Snow! Let It Snow! Let It Snow!"], ["Boney M.", "Mary's Boy Child"], ["Pentatonix", "Carol of the Bells"]]}, "film2": {"n": "🎬 Ещё кино", "t": [["Bill Medley", "(I've Had) The Time of My Life", "Грязные танцы"], ["Whitney Houston", "I Will Always Love You", "Телохранитель"], ["Aerosmith", "I Don't Want to Miss a Thing", "Армагеддон"], ["Roy Orbison", "Oh, Pretty Woman", "Красотка"], ["Blue Swede", "Hooked on a Feeling", "Стражи Галактики"], ["Huey Lewis & The News", "The Power of Love", "Назад в будущее"], ["Clint Mansell", "Lux Aeterna", "Реквием по мечте"], ["Yann Tiersen", "Comptine d'un autre été", "Амели"], ["Underworld", "Born Slippy", "На игле"], ["Nancy Sinatra", "Bang Bang", "Убить Билла"], ["Ryan Gosling", "City of Stars", "Ла-Ла Ленд"], ["Simple Minds", "Don't You (Forget About Me)", "Клуб «Завтрак»"], ["The Righteous Brothers", "Unchained Melody", "Привидение"], ["Seal", "Kiss from a Rose", "Бэтмен навсегда"], ["Simon & Garfunkel", "Mrs. Robinson", "Выпускник"], ["Lalo Schifrin", "Mission: Impossible Theme", "Миссия невыполнима"], ["Monty Norman", "James Bond Theme", "Джеймс Бонд"], ["Adele", "Skyfall", "007: Координаты «Скайфолл»"], ["Hans Zimmer", "Now We Are Free", "Гладиатор"], ["Alan Silvestri", "The Avengers", "Мстители"], ["Henry Mancini", "The Pink Panther Theme", "Розовая пантера"], ["Nino Rota", "Speak Softly Love", "Крёстный отец"], ["Irene Cara", "Flashdance... What a Feeling", "Танец-вспышка"], ["Kenny Loggins", "Footloose", "Свободные"], ["Ludwig Göransson", "Can You Hear the Music", "Оппенгеймер"], ["Hans Zimmer", "Dream Is Collapsing", "Начало"], ["Tomoyasu Hotei", "Battle Without Honor or Humanity", "Убить Билла"], ["Iggy Pop", "Lust for Life", "На игле"], ["Chuck Berry", "You Never Can Tell", "Криминальное чтиво"], ["The Immortals", "Techno Syndrome", "Смертельная битва"]], "q": "Из какого фильма?", "xl": "Фильм"}, "tv2": {"n": "📺 Ещё сериалы", "t": [["Kate Bush", "Running Up That Hill", "Очень странные дела"], ["Rodrigo Amarante", "Tuyo", "Нарко"], ["Alabama 3", "Woke Up This Morning", "Клан Сопрано"], ["The Handsome Family", "Far from Any Road", "Настоящий детектив"], ["Lazlo Bane", "Superman", "Клиника"], ["Barenaked Ladies", "The History of Everything", "Теория большого взрыва"], ["RJD2", "A Beautiful Mine", "Безумцы"], ["Cristobal Tapia de Veer", "Aloha!", "Белый лотос"], ["Love Spit Love", "How Soon Is Now?", "Зачарованные"], ["The Who", "Who Are You", "C.S.I."], ["Jimi Jamison", "I'm Always Here", "Спасатели Малибу"], ["Murray Gold", "Doctor Who Theme", "Доктор Кто"], ["David Arnold", "The Game Is On", "Шерлок"], ["Rolfe Kent", "Dexter Main Title", "Декстер"], ["Jeff Beal", "House of Cards Main Title Theme", "Карточный домик"], ["John Lunn", "Downton Abbey Suite", "Аббатство Даунтон"], ["Theodore Shapiro", "Severance Main Title Theme", "Разделение"], ["Labrinth", "All for Us", "Эйфория"], ["Little Barrie", "Better Call Saul Main Title Theme", "Лучше звоните Солу"], ["Jay Ferguson", "The Office Theme", "Офис"], ["Ramin Djawadi", "Westworld Main Title Theme", "Мир Дикого Запада"], ["Gustavo Santaolalla", "The Last of Us", "Одни из нас (сериал)"], ["Ramin Djawadi", "House of the Dragon", "Дом Дракона"], ["Danny Elfman", "Wednesday Main Titles", "Уэнсдей"]], "q": "Из какого сериала?", "xl": "Сериал"}, "game2": {"n": "🎮 Ещё игры", "t": [["Christopher Tin", "Baba Yetu", "Civilization IV"], ["The Ink Spots", "I Don't Want to Set the World on Fire", "Fallout 3"], ["José González", "Far Away", "Red Dead Redemption"], ["Daniel Lanois", "That's the Way It Is", "Red Dead Redemption 2"], ["SAMURAI", "Never Fade Away", "Cyberpunk 2077"], ["P.T. Adamczyk", "The Rebel Path", "Cyberpunk 2077"], ["Marcin Przybyłowicz", "Lullaby of Woe", "Ведьмак 3"], ["MoozE", "Dirge for the Planet", "S.T.A.L.K.E.R."], ["Blur", "Song 2", "FIFA 98"], ["Lil Jon", "Get Low", "NFS Underground"], ["Goldfinger", "Superman", "Tony Hawk's Pro Skater"], ["Jonathan Coulton", "Want You Gone", "Portal 2"], ["Martin O'Donnell", "Halo Theme", "Halo"], ["Jesper Kyd", "Ezio's Family", "Assassin's Creed II"], ["Christopher Larkin", "Hollow Knight", "Hollow Knight"], ["Lena Raine", "Resurrections", "Celeste"], ["Darren Korb", "In the Blood", "Hades"], ["Ari Pulkkinen", "Angry Birds Theme", "Angry Birds"], ["Jason Paige", "Pokémon Theme", "Покемон"], ["Michael Hunter", "Soviet Connection", "GTA IV"], ["Kärtsy Hatakka", "Max Payne Theme", "Max Payne"], ["Matt Uelmen", "Tristram", "Diablo"], ["Mick Gordon", "Rip & Tear", "DOOM (2016)"], ["C418", "Subwoofer Lullaby", "Minecraft"]], "q": "Из какой игры?", "xl": "Игра"}, "uaby2": {"n": "Ещё Украина и Беларусь", "t": [["Okean Elzy", "Без бою"], ["Okean Elzy", "Там, де нас нема"], ["Скрябін", "Старі фотографії"], ["Бумбокс", "Вахтерам"], ["Воплі Відоплясова", "Весна"], ["Antytila", "TDME"], ["The Hardkiss", "Helpless"], ["Jerry Heil", "#ВЕЛИКАБАНДА"], ["alyona alyona", "Рибка"], ["Tina Karol", "Show Me Your Love"], ["MÉLOVIN", "Under the Ladder"], ["Христина Соловій", "Тримай"], ["Kalush", "Додому"], ["Ziferblat", "Bird of Pray"], ["Brutto", "Родны край"], ["Naviband", "Гісторыя майго жыцця"], ["Lyapis Trubetskoy", "Капиталист"], ["Pesniary", "Беловежская пуща"], ["DakhaBrakha", "Baby"]]}});
+
+for(const [a,b] of [["p80b","p80"],["p90b","p90"],["p00b","p00"],["p10b","p10"],["film2","film"],["tv2","tv"],["game2","game"],["uaby2","uaby"]]){PL[b].t.push(...PL[a].t);delete PL[a]}
+PL.p10.n="Хиты 2010-х";PL.cov.t.push(...[["Måneskin", "Beggin'", "The Four Seasons"], ["Marilyn Manson", "Tainted Love", "Gloria Jones"], ["Placebo", "Running Up That Hill", "Kate Bush"], ["Guns N' Roses", "Knockin' on Heaven's Door", "Bob Dylan"], ["Guns N' Roses", "Live and Let Die", "Paul McCartney & Wings"], ["Metallica", "Whiskey in the Jar", "Ирландская народная / Thin Lizzy"], ["Joe Cocker", "With a Little Help from My Friends", "The Beatles"], ["Celine Dion", "All by Myself", "Eric Carmen"], ["Michael Bublé", "Feeling Good", "Nina Simone"], ["Pet Shop Boys", "Always on My Mind", "Elvis Presley"], ["Eva Cassidy", "Fields of Gold", "Sting"], ["Joan Jett & The Blackhearts", "I Love Rock 'n' Roll", "The Arrows"], ["Muse", "Feeling Good", "Nina Simone"], ["Ike & Tina Turner", "Proud Mary", "Creedence Clearwater Revival"], ["Lana Del Rey", "Doin' Time", "Sublime"], ["Pentatonix", "Hallelujah", "Leonard Cohen"], ["Fugees", "Killing Me Softly with His Song", "Roberta Flack"]]);PL.p90.t=PL.p90.t.filter(t=>t[0]!=="Fugees");
+{const o=["p70","p80","p90","p00","p10","p20","rock","hip","dance","euro","pl","uaby","film","tv","cart","game","duets","xmas","cov"];const n={};o.forEach(k=>{if(PL[k])n[k]=PL[k]});Object.keys(PL).forEach(k=>{if(!n[k])n[k]=PL[k]});for(const k in PL)delete PL[k];Object.assign(PL,n)}
+const FX={vinyl:"💿 Зажёванная пластинка",radio:"📻 Старое радио",reverse:"⏪ Задом наперёд",fast:"🐿️ Ускорено",slow:"🐢 Замедлено",intro:"⚡ Секунда",clean:"🎧 Без эффекта"};
+/* ---------- iTunes lookup (JSONP) ---------- */
+let jp=0;
+function jsonp(url){return new Promise((res,rej)=>{const cb="__it"+(++jp),s=document.createElement("script");const to=setTimeout(()=>{clean();rej(new Error("timeout"))},9000);
+  function clean(){clearTimeout(to);delete window[cb];s.remove()}
+  window[cb]=d=>{clean();res(d)};s.onerror=()=>{clean();rej(new Error("net"))};s.src=url+"&callback="+cb;document.head.appendChild(s)})}
+const norm=x=>(x||"").toLowerCase().normalize("NFKD").replace(/[^\p{L}\p{N} ]/gu,"").trim();
+function pickTrack(tr,rs,N,A_){
+  const a=norm(tr.a).split(" ").filter(w=>w.length>1)[0]||"";
+  const sw=norm(tr.s).split(" ").filter(w=>!["the","a","an","of","i","you","me","my"].includes(w)).sort((x,y)=>y.length-x.length)[0]||norm(tr.s);
+  const T=r=>norm(N(r)).includes(sw),A=r=>!a||norm(A_(r)).includes(a);
+  return rs.find(r=>T(r)&&A(r))||rs.find(T)||null}
+async function lookup(tr){
+  if(tr.url!==undefined)return tr;
+  if(tr._p)return tr._p;
+  return tr._p=(async()=>{
+    const term=encodeURIComponent((tr.a+" "+tr.s).trim());let netFail=0,tries=0;
+    for(const c of ["US","PL"]){tries++;
+      try{const d=await jsonp(`https://itunes.apple.com/search?term=${term}&media=music&entity=song&limit=10&country=${c}`);
+        const best=pickTrack(tr,(d.results||[]).filter(r=>r.previewUrl),r=>r.trackName,r=>r.artistName);
+        if(best){tr.url=best.previewUrl;tr.src="Apple";tr.art=(best.artworkUrl100||"").replace("100x100","300x300");tr.ia=best.artistName;tr.is=best.trackName;if(!tr.a)tr.a=best.artistName;return tr}
+      }catch(e){netFail++;break}}
+    tries++;
+    try{const d=await jsonp(`https://api.deezer.com/search?q=${term}&limit=10&output=jsonp`);
+      const best=pickTrack(tr,(d.data||[]).filter(r=>r.preview),r=>r.title,r=>r.artist&&r.artist.name);
+      if(best){tr.url=best.preview;tr.src="Deezer";tr.art=(best.album&&best.album.cover_big)||"";tr.ia=best.artist.name;tr.is=best.title;if(!tr.a)tr.a=best.artist.name;return tr}
+    }catch(e){netFail++}
+    tr.url=null;tr.err=netFail>=2?"net":"nf";return tr})();
+}
+
+/* ---------- audio ---------- */
+let ctx=null,playing=[],spinT=null,el=null,elTimers=[];
+function getCtx(){if(!ctx)ctx=new(window.AudioContext||window.webkitAudioContext)();if(ctx.state==="suspended")ctx.resume();return ctx}
+function loadBuf(tr){
+  if(tr.buf||tr.noBuf)return Promise.resolve(tr.buf);
+  if(tr._b)return tr._b;
+  return tr._b=(async()=>{try{const r=await fetch(tr.url);if(!r.ok)throw 0;const ab=await r.arrayBuffer();tr.buf=await new Promise((res,rej)=>getCtx().decodeAudioData(ab,res,rej))}catch(e){tr.noBuf=true}return tr.buf})();
+}
+function reversed(tr){if(tr.rev)return tr.rev;const b=tr.buf,r=ctx.createBuffer(b.numberOfChannels,b.length,b.sampleRate);
+  for(let c=0;c<b.numberOfChannels;c++){const s=b.getChannelData(c),d=r.getChannelData(c),n=s.length;for(let k=0;k<n;k++)d[k]=s[n-1-k]}return tr.rev=r}
+function noiseBuf(sec,crackle){const n=Math.floor(ctx.sampleRate*sec),b=ctx.createBuffer(1,n,ctx.sampleRate),d=b.getChannelData(0);
+  for(let k=0;k<n;k++){let v=(Math.random()*2-1)*(crackle?.02:.12);if(crackle&&Math.random()<.0009)v+=(Math.random()*2-1)*.9;d[k]=v}return b}
+function stopAll(){playing.forEach(n=>{try{n.stop()}catch(e){}});playing=[];elTimers.forEach(clearTimeout);elTimers=[];if(el){el.pause()}setSpin(false)}
+function setSpin(v,dur){$("vinyl").classList.toggle("spin",v);$("vlab").textContent=v?"■":"▶";clearTimeout(spinT);const pb=$("pb");pb.style.transition="none";pb.style.width="0";if(v&&dur){void pb.offsetWidth;pb.style.transition=`width ${dur}s linear`;pb.style.width="100%"}}
+function addNoise(c,out,now,dur,crackle,gain){const nz=c.createBufferSource();nz.buffer=noiseBuf(dur+1,crackle);const g=c.createGain();g.gain.value=gain;nz.connect(g);g.connect(out);nz.start(now);nz.stop(now+dur);playing.push(nz)}
+
+let silEl=null,unlocked=false;
+function silentUrl(){const n=4000,b=new Uint8Array(44+n),v=new DataView(b.buffer);const w=(o,t)=>[...t].forEach((ch,i)=>b[o+i]=ch.charCodeAt(0));
+  w(0,"RIFF");v.setUint32(4,36+n,true);w(8,"WAVEfmt ");v.setUint32(16,16,true);v.setUint16(20,1,true);v.setUint16(22,1,true);v.setUint32(24,8000,true);v.setUint32(28,8000,true);v.setUint16(32,1,true);v.setUint16(34,8,true);w(36,"data");v.setUint32(40,n,true);b.fill(128,44);
+  return URL.createObjectURL(new Blob([b],{type:"audio/wav"}))}
+function unlock(){ // must run inside a tap: makes sound work on iPhone, incl. silent switch
+  getCtx();try{if(navigator.audioSession)navigator.audioSession.type="playback"}catch(e){}
+  if(unlocked)return;unlocked=true;
+  try{const u=silentUrl();silEl=new Audio(u);silEl.loop=true;silEl.volume=0.01;silEl.play().catch(()=>{});
+    if(!el)el=new Audio();el.src=u;el.play().then(()=>{el.pause()}).catch(()=>{})}catch(e){}
+}
+function elPlay(url,start,rate){return new Promise((res,rej)=>{
+  el.pause();el.preservesPitch=false;el.mozPreservesPitch=false;el.webkitPreservesPitch=false;el.volume=1;
+  let done=false;const fin=(ok,e)=>{if(done)return;done=true;clearTimeout(to);ok?res():rej(e)};
+  const to=setTimeout(()=>fin(false,new Error("timeout")),12000);
+  el.onerror=()=>fin(false,new Error("load"));
+  el.onloadedmetadata=()=>{try{if(start>0)el.currentTime=Math.min(start,Math.max(0,(el.duration||30)-3))}catch(e){}};
+  el.src=url;el.playbackRate=rate||1;el.play().then(()=>{el.playbackRate=rate||1;fin(true)},e=>fin(false,e))})}
+const waitMax=(p,ms)=>Promise.race([p,new Promise(r=>setTimeout(r,ms))]);
+async function play(useFx){
+  unlock();
+  if($("vinyl").classList.contains("spin")){stopAll();return}
+  stopAll();const tr=cur();if(!tr)return;
+  $("vlab").textContent="…";$("status").textContent=tr.url===undefined?"Ищу трек…":"";
+  await lookup(tr);if(cur()!==tr)return;
+  if(!tr.url){$("status").textContent=tr.err==="net"?"Музыкальный API не отвечает. Проверь интернет или нажми «Проверить звук» в настройках раунда.":"Не нашёл этот трек — жми «Показать ответ» и дальше";$("vlab").textContent="▶";return}
+  const c=getCtx(),fx=useFx?curFx:"clean";
+  if(!tr.buf&&!tr.noBuf){$("status").textContent="Загружаю…";await waitMax(loadBuf(tr),3500);if(cur()!==tr)return}
+  const buf=tr.buf;
+  let dur=fx==="intro"?1.2:Math.min(clipLen,28);
+  const start=fx==="intro"?0:tr.start;
+  if(buf){ // full Web Audio path
+    const out=c.createGain();out.connect(c.destination);let now=c.currentTime+.05,chain=out,src=buf,rate=1,offset=start;
+    if(fx==="reverse"){src=reversed(tr);offset=Math.max(0,buf.duration-start-dur)}
+    if(fx==="fast")rate=1.6;if(fx==="slow")rate=.7;
+    if(fx==="radio"){const hp=c.createBiquadFilter();hp.type="highpass";hp.frequency.value=500;const lp=c.createBiquadFilter();lp.type="lowpass";lp.frequency.value=2800;
+      const ws=c.createWaveShaper(),cv=new Float32Array(1024);for(let k=0;k<1024;k++)cv[k]=Math.tanh((k/512-1)*3);ws.curve=cv;hp.connect(lp);lp.connect(ws);ws.connect(out);chain=hp;addNoise(c,out,now,dur,false,.25)}
+    if(fx==="vinyl"){
+      const lp=c.createBiquadFilter();lp.type="lowpass";lp.frequency.value=4500;lp.connect(out);chain=lp;addNoise(c,out,now,dur,true,1);
+      const seg=(p,len,when)=>{const s=c.createBufferSource();s.buffer=buf;const lfo=c.createOscillator(),lg=c.createGain();
+        lfo.frequency.value=.6+Math.random();lg.gain.value=25+Math.random()*35;lfo.connect(lg);lg.connect(s.detune);lfo.start(when);lfo.stop(when+len);
+        s.connect(chain);s.start(when,p%buf.duration,len);playing.push(s,lfo)};
+      let tt=0,pos=offset;
+      while(tt<dur){if(Math.random()<.45){const ch=.18+Math.random()*.25,reps=2+Math.floor(Math.random()*4);for(let r=0;r<reps&&tt<dur;r++){seg(pos,ch,now+tt);tt+=ch}pos+=ch;if(Math.random()<.3)pos+=.5+Math.random()*1.5}
+        else{const len=.7+Math.random()*1.4;seg(pos,len,now+tt);tt+=len;pos+=len}}
+    }else{const s=c.createBufferSource();s.buffer=src;s.playbackRate.value=rate;s.connect(chain);s.start(now,offset,dur*rate);playing.push(s)}
+  }else{ // simple path: <audio> element
+    let f=fx==="reverse"?"vinyl":fx;
+    try{await elPlay(tr.url,start,f==="fast"?1.6:f==="slow"?.7:1)}
+    catch(e){$("status").textContent=e&&e.name==="NotAllowedError"?"Браузер не дал включить звук — нажми на пластинку ещё раз":"Трек не загрузился ("+((e&&(e.name||e.message))||"ошибка")+") — нажми ещё раз";setSpin(false);return}
+    if(cur()!==tr){el.pause();return}
+    if(f==="radio"){el.volume=.6;addNoise(c,c.destination,c.currentTime,dur,false,.18)}
+    if(f==="vinyl"){addNoise(c,c.destination,c.currentTime,dur,true,1);
+      let t=1200;while(t<dur*1000){const at=t;elTimers.push(setTimeout(()=>{const back=.2+Math.random()*.2;let r=2+Math.floor(Math.random()*3);
+        const loop=()=>{if(r-->0){try{el.currentTime=Math.max(0,el.currentTime-back)}catch(e){}elTimers.push(setTimeout(loop,back*1000))}};loop()},at));t+=1500+Math.random()*1500}}
+    elTimers.push(setTimeout(()=>{el.pause()},dur*1000));
+  }
+  $("status").textContent="";
+  setSpin(true,dur);spinT=setTimeout(()=>setSpin(false),dur*1000+150);
+}
+async function diag(){
+  unlock();const out=$("diag"),L=[];const put=()=>out.innerHTML=L.join("<br>");out.classList.remove("hidden");
+  const step=async(name,fn)=>{L.push("⏳ "+name);put();let r;try{r=await fn()}catch(e){r=[false,(e&&(e.name||e.message))||"ошибка"]}L[L.length-1]=(r[0]?"✅ ":"❌ ")+name+(r[1]?" — "+r[1]:"");put();return r[0]};
+  await step("API Apple",async()=>{await jsonp("https://itunes.apple.com/search?term=queen&entity=song&limit=1");return [true]});
+  await step("API Deezer",async()=>{await jsonp("https://api.deezer.com/search?q=queen&limit=1&output=jsonp");return [true]});
+  const tr={a:"Queen",s:"Bohemian Rhapsody"};
+  const found=await step("Поиск трека",async()=>{await lookup(tr);return [!!tr.url,tr.url?"источник: "+tr.src:(tr.err==="net"?"API недоступны":"не найден")]});
+  if(found){
+    await step("Эффекты (пластинка, реверс)",async()=>{await waitMax(loadBuf(tr),8000);return [!!tr.buf,tr.buf?"":"будут упрощённые"]});
+    await step("Воспроизведение",async()=>{await elPlay(tr.url,5,1);setTimeout(()=>el.pause(),2500);return [true,"должно быть слышно 2 секунды"]});
+  }
+  L.push(found?"Если всё ✅, а звука нет — проверь громкость и беззвучный режим.":"Без доступа к API звук не заработает: открой приложение как сайт (не внутри Claude) и проверь интернет.");put();
+}
+
+/* ---------- sound game ---------- */
+let plOn=new Set(store.get("pl")||["p90","p00","film","tv","game"]),fxOn=new Set(store.get("fx")||["vinyl","radio","reverse"]),clipLen=10,count=20,mine=store.get("mine")||[];
+function pool(){let p=[];plOn.forEach(k=>PL[k].t.forEach(t=>p.push({a:t[0],s:t[1],x:t[2]||null,pl:k})));mine.forEach(m=>p.push({a:m[0],s:m[1],pl:"mine"}));const seen=new Set();return p.filter(t=>{const k=norm(t.a)+"|"+norm(t.s);if(seen.has(k))return false;seen.add(k);return true})}
+function sRender(){
+  $("pls").innerHTML=Object.entries(PL).map(([k,p])=>`<button class="item ${plOn.has(k)?'on':''}" data-k="${k}"><span class="ck">${plOn.has(k)?'✓':''}</span><span class="nm">${p.n}</span><span class="ct">${p.t.length}</span></button>`).join("");
+  $("pls").querySelectorAll(".item").forEach(el=>el.onclick=()=>{const k=el.dataset.k;plOn.has(k)?plOn.delete(k):plOn.add(k);store.set("pl",[...plOn]);sRender()});
+  $("sall").textContent=plOn.size===Object.keys(PL).length?"Снять все":"Выбрать все";
+  $("sfx").innerHTML=Object.entries(FX).map(([k,n])=>`<button class="chip ${fxOn.has(k)?'on':''}" data-k="${k}">${n}</button>`).join("");
+  $("sfx").querySelectorAll(".chip").forEach(c=>c.onclick=()=>{const k=c.dataset.k;if(fxOn.has(k)){if(fxOn.size>1)fxOn.delete(k)}else fxOn.add(k);store.set("fx",[...fxOn]);sRender()});
+  $("slens").innerHTML=[5,10,15,25].map(n=>`<button class="chip ${clipLen===n?'on':''}" data-n="${n}">${n} сек</button>`).join("");
+  $("slens").querySelectorAll(".chip").forEach(c=>c.onclick=()=>{clipLen=+c.dataset.n;sRender()});
+  $("scnts").innerHTML=[10,20,46,0].map(n=>`<button class="chip ${count===n?'on':''}" data-n="${n}">${n||"Все"}</button>`).join("");
+  $("scnts").querySelectorAll(".chip").forEach(c=>c.onclick=()=>{count=+c.dataset.n;sRender()});
+  $("mine").innerHTML=mine.map((m,k)=>`<span class="chip on">${m[0]} — ${m[1]} <b data-k="${k}">✕</b></span>`).join("");
+  $("mine").querySelectorAll("b").forEach(x=>x.onclick=()=>{mine.splice(+x.dataset.k,1);store.set("mine",mine);sRender()});
+  dock();
+}
+$("sall").onclick=()=>{plOn=plOn.size===Object.keys(PL).length?new Set():new Set(Object.keys(PL));store.set("pl",[...plOn]);sRender()};
+function addMine(){const v=$("addIn").value.trim();if(!v)return;const p=v.split(/\s+[—–-]\s+/);mine.push(p.length>1?[p[0],p.slice(1).join(" - ")]:["",v]);$("addIn").value="";store.set("mine",mine);sRender()}
+$("addBtn").onclick=addMine;$("addIn").onkeydown=e=>{if(e.key==="Enter")addMine()};
+let apiOk=null;
+function probe(){if(apiOk!==null)return Promise.resolve(apiOk);return jsonp("https://itunes.apple.com/search?term=queen&entity=song&limit=1").catch(()=>jsonp("https://api.deezer.com/search?q=queen&limit=1&output=jsonp")).then(()=>apiOk=true,()=>apiOk=false)}
+$("mAudio").onclick=()=>{sRender();show("aset");probe().then(ok=>$("apiWarn").classList.toggle("hidden",ok))};
+let sdeck=[],si=0,sscore=0,curFx="vinyl",revealed=false,sres=[];
+const cur=()=>sdeck[si];
+function startAudio(){
+  unlock();let p=mix(pool());if(count)p=p.slice(0,count);if(!p.length)return;lastMode="audio";
+  sdeck=p.map(t=>({...t,start:2+Math.random()*Math.max(1,(28-clipLen-2))}));si=0;sscore=0;sres=[];show("aud");sRound();
+}
+function sRound(){
+  stopAll();const tr=cur(),f=[...fxOn];curFx=f[Math.floor(Math.random()*f.length)];revealed=false;
+  $("acnt").textContent=`${si+1}/${sdeck.length}`;$("aprog").style.width=(si/sdeck.length*100)+"%";$("apts").textContent=`${sscore} очк.`;
+  $("afx").textContent=FX[curFx];$("srev").innerHTML=tr.x?`<div class="qq">${PL[tr.pl].q}</div>`:"";$("status").textContent="";
+  $("aclean").style.display=curFx==="clean"?"none":"";setSpin(false);dock();
+  lookup(tr).then(t=>{if(cur()!==t)return;if(t.url)loadBuf(t);else if(t.err==="nf"&&sdeck.length>1){sdeck.splice(si,1);if(si>=sdeck.length){si=sdeck.length;finish(sscore,sdeck.length,{},[]);}else sRound()}else if(t.err==="net")$("status").textContent="Музыкальный API не отвечает — проверь интернет"});
+  const nx=sdeck[si+1];if(nx)lookup(nx).then(t=>{if(t.url)loadBuf(t)});
+}
+function reveal(){
+  revealed=true;const tr=cur();
+  const name=tr.a?`${tr.a} — ${tr.s}`:(tr.ia?`${tr.ia} — ${tr.is}`:tr.s);
+  $("srev").innerHTML=`${tr.art?`<img src="${tr.art}" alt="">`:""}${tr.x&&tr.pl!=="cov"?`<div class="an">${tr.x}</div><div class="or">${name}</div>`:`<div class="an">${name}</div>`}${tr.x&&tr.pl==="cov"?`<div class="or">${PL[tr.pl].xl}: <b>${tr.x}</b></div>`:""}`;
+  dock();
+}
+function anext(ok){stopAll();if(ok){sscore++;buzz(20)}const tr=cur();sres.push({tr,ok});si++;
+  if(si<sdeck.length)sRound();else finish(sscore,sdeck.length,{},sres.filter(r=>!r.ok).map(r=>["","Мимо:",[`${r.tr.x?r.tr.x+" · ":""}${r.tr.a?r.tr.a+" — ":""}${r.tr.s}`],0]))}
+$("diagBtn").onclick=diag;
+$("vinyl").onclick=()=>play(true);$("aclean").onclick=()=>{stopAll();play(false)};
+document.addEventListener("keydown",e=>{if(screen!=="aud"||e.target.tagName==="INPUT")return;
+  if(e.key===" "){e.preventDefault();play(true)}else if(e.key==="Enter"){e.preventDefault();revealed?anext(true):reveal()}});
+$("stQ").textContent=`${Q.length} вопросов`;$("stT").textContent=`${Object.values(PL).reduce((a,p)=>a+p.t.length,0)} треков`;
+dock();
+probe();
+</script>
+</body>
+</html>
