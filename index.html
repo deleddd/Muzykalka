@@ -185,6 +185,56 @@ h1x{}.hero h1{font:700 clamp(40px,12vw,84px)/0.92 Oswald,'Arial Narrow',Impact,s
 .pbar{width:min(68vw,250px);height:4px;border-radius:2px;background:var(--line);margin-top:16px;overflow:hidden}
 .pbar i{display:block;height:100%;width:0;background:var(--gold)}
 .opt{min-height:56px}
+/* ---- polish ---- */
+:root{--r:18px;--sh:0 10px 30px rgba(0,0,0,.28)}
+body{letter-spacing:-.005em}
+.bgword{opacity:.035;transition:opacity .3s}
+body:not(.at-home) .bgword{opacity:0}
+.app{padding-left:20px;padding-right:20px}
+.hero{padding:26px 0 4px}
+.hero h1{letter-spacing:-.5px;background:linear-gradient(180deg,#fff 30%,#f3cfa0);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.kick,.lbl,.tag{font-weight:700}
+.lbl{margin:26px 0 12px;font-size:11px;letter-spacing:1.6px}
+.tile,.item,.switch,.opt,.hint,.fb,.miss div,.mode{backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
+.tile{border-radius:22px;box-shadow:var(--sh);border-color:rgba(255,255,255,.1);background:linear-gradient(160deg,rgba(255,255,255,.1),rgba(255,255,255,.03))}
+.tile .ic{width:46px;height:46px;border-radius:14px;background:rgba(255,255,255,.08);display:grid;place-items:center;font-size:24px}
+.tile.wide{flex-direction:row;align-items:center;gap:14px;min-height:96px;box-shadow:0 14px 40px rgba(240,180,76,.12)}
+.tile.wide .ic{margin:0;width:58px;height:58px;font-size:30px;background:rgba(240,180,76,.2);flex:none}
+.tile.wide b{display:block}.tile.wide>span{display:none}
+.tile.wide .tx{display:flex;flex-direction:column;gap:2px}.tile.wide .tx span{font-size:13px;color:var(--mut)}
+.item,.switch{border-radius:16px;background:rgba(255,255,255,.055);transition:background .15s,border-color .15s,transform .1s}
+.item:active,.switch:active,.chip:active{transform:scale(.98)}
+.item.on{background:rgba(240,180,76,.1)}
+.item .ck{border-radius:8px}
+.chip{transition:background .15s,border-color .15s,transform .1s;background:rgba(255,255,255,.055)}
+.btn{border-radius:18px;box-shadow:0 8px 24px rgba(0,0,0,.3)}
+.btn.gold{background:linear-gradient(180deg,#f7c566,#e9a53a);box-shadow:0 10px 28px rgba(240,180,76,.28)}
+.btn.ghost{background:rgba(255,255,255,.09);box-shadow:none}
+.btn.ok{background:linear-gradient(180deg,#3fd389,#27b06a)}.btn.bad{background:linear-gradient(180deg,#f4626a,#e03b43)}
+.btn:disabled{box-shadow:none}
+.dock{background:linear-gradient(transparent,rgba(30,5,7,.92) 38%);padding-top:28px}
+.icon{background:rgba(255,255,255,.08);transition:background .15s,transform .1s}.icon:active{transform:scale(.92);background:rgba(255,255,255,.16)}
+.prog{height:5px}.prog i{background:linear-gradient(90deg,#f7c566,#e9a53a)}
+.pill{background:rgba(255,255,255,.08);font-variant-numeric:tabular-nums}
+.q{font-size:28px;letter-spacing:-.2px;margin:8px 0 20px}
+.opt{border-radius:16px;border-color:rgba(255,255,255,.1);background:rgba(255,255,255,.055);animation:optin .28s ease backwards}
+.opt:nth-child(2){animation-delay:.04s}.opt:nth-child(3){animation-delay:.08s}.opt:nth-child(4){animation-delay:.12s}
+@keyframes optin{from{opacity:0;transform:translateY(10px)}}
+.opt .k{border-radius:10px;transition:background .2s,color .2s}
+.opt.ok{animation:pop .35s ease}.opt.bad{animation:shake .35s ease}
+@keyframes pop{40%{transform:scale(1.03)}}
+@keyframes shake{20%{transform:translateX(-6px)}40%{transform:translateX(6px)}60%{transform:translateX(-4px)}80%{transform:translateX(3px)}}
+.fb{border-radius:16px;border-left:3px solid var(--gold)}.fb.good{border-left-color:var(--ok)}.fb.wrong{border-left-color:var(--bad)}
+.cbox{border-radius:22px;box-shadow:0 24px 60px rgba(0,0,0,.55);border:1px solid rgba(255,255,255,.08)}
+.vinyl{box-shadow:0 24px 70px rgba(0,0,0,.65),0 0 0 1px rgba(255,255,255,.06),inset 0 0 0 6px #0a0a0a}
+.ring{filter:drop-shadow(0 12px 30px rgba(240,180,76,.18))}
+.verdict{font-size:22px;margin-top:12px}
+.hint{border-radius:14px;background:rgba(255,255,255,.05)}
+.drop{border-radius:22px;background:rgba(255,255,255,.03)}
+.nav .t{font-size:16px;color:#fff}
+button:focus-visible,a:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+@media (min-width:700px){.app{padding-top:40px}.tiles{gap:14px}}
 </style>
 </head>
 <body>
@@ -199,12 +249,13 @@ h1x{}.hero h1{font:700 clamp(40px,12vw,84px)/0.92 Oswald,'Arial Narrow',Impact,s
     <div class="stats"><span id="stQ"></span><span id="stT"></span><span id="best"></span></div>
   </div>
   <div class="tiles">
-    <button class="tile wide" id="mQuiz"><div class="ic">🎤</div><b>Викторина</b><span id="qCount"></span></button>
+    <button class="tile wide" id="mQuiz"><div class="ic">🎤</div><div class="tx"><b>Викторина</b><span id="qCount"></span></div><div class="go" style="margin-left:auto;font-size:24px;color:var(--mut)">›</div></button>
     <button class="tile" id="mAudio"><div class="ic">💿</div><b>Звук</b><span>Угадай трек с эффектами</span></button>
+    <button class="tile" id="mSil"><div class="ic">👤</div><b>Силуэты</b><span>Узнай исполнителя по контуру</span></button>
     <button class="tile" id="mCov"><div class="ic">🖼️</div><b>Картинки</b><span>Обложки, клипы, постеры</span></button>
     <button class="tile" id="mKar"><div class="ic">🎙️</div><b>Караоке</b><span>Зашифрованные строчки</span></button>
-    <button class="tile" id="mImg"><div class="ic">👤</div><b>Свои фото</b><span>Силуэты из твоих картинок</span></button>
   </div>
+  <button class="link" id="mImg" style="margin:18px auto 0;display:block">Загрузить свои картинки →</button>
 </section>
 
 <!-- QUIZ SETUP -->
@@ -786,7 +837,7 @@ let screen="home";
 
 function show(s){
   document.querySelectorAll(".screen").forEach(x=>x.classList.toggle("on",x.id===s));
-  screen=s; window.scrollTo(0,0); dock();
+  screen=s; document.body.classList.toggle("at-home",s==="home"); window.scrollTo(0,0); dock();
 }
 function dock(){
   const d=$("dockIn"); let h="";
@@ -873,7 +924,7 @@ document.addEventListener("keydown",ev=>{
 /* END */
 function finish(s,n,pr,wr){
   lastWrong=wr||[]; const p=n?s/n:0;
-  $("ring").style.background=`conic-gradient(var(--gold) ${p*360}deg,rgba(255,255,255,.1) 0)`;
+  {const t0=performance.now(),rg=$("ring"),stp=t=>{const k=Math.min(1,(t-t0)/800),e=1-Math.pow(1-k,3);rg.style.background=`conic-gradient(var(--gold) ${p*360*e}deg,rgba(255,255,255,.1) 0)`;if(k<1&&screen==="end")requestAnimationFrame(stp)};rg.style.background="rgba(255,255,255,.1)";requestAnimationFrame(stp)}
   $("ring").innerHTML=`<div style="position:absolute;inset:10px;border-radius:50%;background:var(--bg)"></div><div class="v" style="position:relative">${s}<small>из ${n}</small></div>`;
   $("verdict").textContent=p>=.85?"Готов забирать первое место 🏆":p>=.65?"Крепкий уровень 🎧":p>=.4?"Неплохо, ещё разок 🎸":"Разогрев засчитан 🎶";
   const best=store.get("best");
@@ -903,37 +954,42 @@ $("qplay").onclick=async()=>{const q=deck[i];if(!q||!q.snd)return;unlock();
 const FILMS=[["The Bodyguard", "Телохранитель"], ["Titanic", "Титаник"], ["Dirty Dancing", "Грязные танцы"], ["Pulp Fiction", "Криминальное чтиво"], ["Grease", "Бриолин"], ["Bohemian Rhapsody", "Богемская рапсодия"], ["Rocketman", "Рокетмен"], ["La La Land", "Ла-Ла Ленд"], ["A Star Is Born", "Звезда родилась"], ["Mamma Mia!", "Мамма Миа!"], ["The Greatest Showman", "Величайший шоумен"], ["Whiplash", "Одержимость"], ["Guardians of the Galaxy", "Стражи Галактики"], ["Top Gun", "Лучший стрелок"], ["Rocky", "Рокки"], ["Ghostbusters", "Охотники за привидениями"], ["Back to the Future", "Назад в будущее"], ["Footloose", "Свободные"], ["Saturday Night Fever", "Лихорадка субботнего вечера"], ["8 Mile", "8 миля"], ["Trainspotting", "На игле"], ["Kill Bill: Vol. 1", "Убить Билла"], ["Interstellar", "Интерстеллар"], ["Inception", "Начало"], ["Gladiator", "Гладиатор"], ["The Lion King", "Король Лев"], ["Frozen", "Холодное сердце"], ["Shrek", "Шрек"], ["Coco", "Тайна Коко"], ["Barbie", "Барби"], ["Elvis", "Элвис"], ["Amadeus", "Амадей"], ["Pretty Woman", "Красотка"], ["Armageddon", "Армагеддон"], ["Skyfall", "007: Координаты «Скайфолл»"], ["Baby Driver", "Малыш на драйве"], ["School of Rock", "Школа рока"], ["Moulin Rouge!", "Мулен Руж!"]];
 const CLIPS=[["Michael Jackson", "Thriller"], ["a-ha", "Take On Me"], ["Queen", "I Want to Break Free"], ["Nirvana", "Smells Like Teen Spirit"], ["Britney Spears", "...Baby One More Time"], ["OK Go", "Here It Goes Again"], ["Lady Gaga", "Bad Romance"], ["Beyoncé", "Single Ladies"], ["PSY", "Gangnam Style"], ["Sia", "Chandelier"], ["Miley Cyrus", "Wrecking Ball"], ["Gotye", "Somebody That I Used to Know"], ["Daft Punk", "Around the World"], ["Fatboy Slim", "Weapon of Choice"], ["Jamiroquai", "Virtual Insanity"], ["The Prodigy", "Firestarter"], ["Guns N' Roses", "November Rain"], ["Madonna", "Vogue"], ["Coldplay", "The Scientist"], ["Red Hot Chili Peppers", "Californication"], ["Eminem", "Without Me"], ["Gorillaz", "Clint Eastwood"], ["Billie Eilish", "bad guy"], ["Childish Gambino", "This Is America"], ["Taylor Swift", "Shake It Off"], ["Katy Perry", "Roar"], ["Adele", "Hello"], ["Robbie Williams", "Rock DJ"], ["Aqua", "Barbie Girl"], ["The White Stripes", "Seven Nation Army"], ["Rammstein", "Du Hast"], ["Kylie Minogue", "Can't Get You Out of My Head"], ["Dua Lipa", "Physical"], ["Lil Nas X", "Old Town Road"], ["Pharrell Williams", "Happy"], ["Peter Gabriel", "Sledgehammer"], ["Dire Straits", "Money for Nothing"], ["Blur", "Coffee & TV"], ["Foo Fighters", "Everlong"], ["Shakira", "Whenever, Wherever"]];
 const INS=[["🎸", "Гитара"], ["🎹", "Клавиши"], ["🎺", "Труба"], ["🎻", "Скрипка"], ["🥁", "Барабан"], ["🎷", "Саксофон"], ["🪕", "Банджо"], ["🪗", "Аккордеон"], ["🎤", "Микрофон"], ["🎧", "Наушники"], ["📯", "Рожок"], ["🔔", "Колокол"], ["📻", "Радиоприёмник"], ["🎙️", "Студийный микрофон"]];
-const CS={alb:"Обложки альбомов",clip:"Клипы",film:"Постеры фильмов",ins:"Силуэты инструментов"};
-const CQ={alb:"Чей это альбом?",clip:"Что это за клип?",film:"Что это за фильм?",ins:"Что это за инструмент?"};
+const PORT=[["Adele", "21"], ["Adele", "25"], ["Michael Jackson", "Thriller"], ["Michael Jackson", "Bad"], ["Prince", "Purple Rain"], ["Madonna", "True Blue"], ["David Bowie", "Aladdin Sane"], ["David Bowie", "Heroes"], ["Amy Winehouse", "Back to Black"], ["Billie Eilish", "When We All Fall Asleep, Where Do We Go?"], ["The Weeknd", "After Hours"], ["The Weeknd", "Starboy"], ["Lady Gaga", "The Fame"], ["Taylor Swift", "1989"], ["Taylor Swift", "Lover"], ["Beyoncé", "Dangerously in Love"], ["Rihanna", "Loud"], ["Rihanna", "Good Girl Gone Bad"], ["Dua Lipa", "Future Nostalgia"], ["Harry Styles", "Fine Line"], ["Bob Marley", "Legend"], ["Elvis Presley", "Elvis Presley"], ["Johnny Cash", "American IV: The Man Comes Around"], ["Whitney Houston", "Whitney"], ["Britney Spears", "...Baby One More Time"], ["Eminem", "The Eminem Show"], ["50 Cent", "Get Rich or Die Tryin'"], ["Drake", "Take Care"], ["Kendrick Lamar", "DAMN."], ["Bruno Mars", "24K Magic"], ["Lana Del Rey", "Born to Die"], ["Olivia Rodrigo", "SOUR"], ["Sabrina Carpenter", "Short n' Sweet"], ["Ariana Grande", "Sweetener"], ["Justin Bieber", "Purpose"], ["Shakira", "Laundry Service"], ["George Michael", "Faith"], ["Freddie Mercury", "Mr. Bad Guy"], ["Tina Turner", "Private Dancer"], ["Cher", "Believe"], ["Kylie Minogue", "Fever"], ["Miley Cyrus", "Bangerz"], ["Post Malone", "Hollywood's Bleeding"], ["Bob Dylan", "The Freewheelin' Bob Dylan"], ["Jimi Hendrix", "Are You Experienced"], ["John Lennon", "Imagine"], ["Björk", "Homogenic"], ["Stromae", "Racine carrée"], ["Jamala", "1944"], ["Bruce Springsteen", "Born to Run"], ["Sting", "Ten Summoner's Tales"]];
+const CS={psil:"Силуэты исполнителей",alb:"Обложки альбомов",clip:"Клипы",film:"Постеры фильмов",ins:"Силуэты инструментов"};
+const CQ={psil:"Кто исполнитель?",alb:"Чей это альбом?",clip:"Что это за клип?",film:"Что это за фильм?",ins:"Что это за инструмент?"};
 const CM={sil:"Чёрно-белый силуэт",crop:"Кусочек",blur:"Размытие",pix:"Пиксели"};
-let csOn=new Set(store.get("cs")||["alb","clip","film","ins"]),cmOn=new Set(store.get("cm2")||["sil","crop","blur","pix"]),ccount=20,cdeck=[],ci=0,cscore=0,clevel=0,cans=false,cres=[];
+let csOn=new Set(store.get("cs2")||["psil","alb","clip","film","ins"]),cmOn=new Set(store.get("cm2")||["sil","crop","blur","pix"]),ccount=20,cdeck=[],ci=0,cscore=0,clevel=0,cans=false,cres=[];
 function cPool(){let p=[];
+  if(csOn.has("psil"))PORT.forEach(x=>p.push({k:"psil",a:x[0],t:x[1],ans:x[0]}));
   if(csOn.has("alb"))ALB.forEach(x=>p.push({k:"alb",a:x[0],t:x[1],ans:`${x[0]} — ${x[1]}`}));
   if(csOn.has("clip"))CLIPS.forEach(x=>p.push({k:"clip",a:x[0],t:x[1],ans:`${x[0]} — ${x[1]}`}));
   if(csOn.has("film"))FILMS.forEach(x=>p.push({k:"film",a:"",t:x[0],ans:x[1]}));
   if(csOn.has("ins"))INS.forEach(x=>p.push({k:"ins",e:x[0],ans:x[1]}));
-  if(apiOk===false)p=p.filter(x=>x.k==="ins");return p}
+  if(apiOk===false)p=p.filter(x=>x.k==="ins");if(cOnly)p=p.filter(x=>x.k===cOnly);return p}
+let cOnly=null;
 function cRender(){
   const chips=(id,obj,set,key)=>{$(id).innerHTML=Object.entries(obj).map(([k,n])=>`<button class="chip ${set.has(k)?'on':''}" data-k="${k}">${n}</button>`).join("");
     $(id).querySelectorAll(".chip").forEach(c=>c.onclick=()=>{const k=c.dataset.k;if(set.has(k)){if(set.size>1)set.delete(k)}else set.add(k);store.set(key,[...set]);cRender()})};
-  chips("csrc",CS,csOn,"cs");chips("cmodes",CM,cmOn,"cm2");
+  chips("csrc",CS,csOn,"cs2");chips("cmodes",CM,cmOn,"cm2");
   $("ccnts").innerHTML=[10,20,46,0].map(n=>`<button class="chip ${ccount===n?'on':''}" data-n="${n}">${n||"Все"}</button>`).join("");
   $("ccnts").querySelectorAll(".chip").forEach(c=>c.onclick=()=>{ccount=+c.dataset.n;cRender()});
   dock();
 }
-$("mCov").onclick=()=>{cRender();show("cset");probe().then(ok=>{$("apiWarn3").classList.toggle("hidden",ok);dock()})};
+$("mSil").onclick=()=>{cOnly="psil";csOn.add("psil");unlockSafe();probe().then(ok=>{if(ok)cStart();else{cOnly=null;cRender();show("cset");$("apiWarn3").classList.remove("hidden")}})};
+function unlockSafe(){}
+$("mCov").onclick=()=>{cOnly=null;cRender();show("cset");probe().then(ok=>{$("apiWarn3").classList.toggle("hidden",ok);dock()})};
 async function artLookup(al){
   if(al.art!==undefined)return al;
   const lw=x=>norm(x).split(" ").filter(w=>w.length>1).sort((p,q)=>q.length-p.length)[0]||norm(x);
-  const aw=norm(al.a).split(" ").filter(w=>w.length>1)[0]||"",tw=lw(al.t),ent={alb:"album",clip:"musicVideo",film:"movie"}[al.k];
+  const aw=norm(al.a).split(" ").filter(w=>w.length>1)[0]||"",tw=lw(al.t),ent={psil:"album",alb:"album",clip:"musicVideo",film:"movie"}[al.k];
   for(const c of (al.k==="film"?["US","GB"]:["PL","US"])){try{const d=await jsonp(`https://itunes.apple.com/search?term=${encodeURIComponent((al.a+" "+al.t).trim())}&entity=${ent}&limit=15&country=${c}`);
-    const rs=(d.results||[]).filter(r=>r.artworkUrl100),nm=r=>norm(al.k==="alb"?r.collectionName:r.trackName);
+    const rs=(d.results||[]).filter(r=>r.artworkUrl100),nm=r=>norm(al.k==="alb"||al.k==="psil"?r.collectionName:r.trackName);
     const hit=al.k==="film"?(rs.find(r=>nm(r)===norm(al.t))||rs.find(r=>nm(r).startsWith(norm(al.t)))):(rs.find(r=>norm(r.artistName).includes(aw)&&nm(r).includes(tw))||(tw.length<3?rs.find(r=>norm(r.artistName).includes(aw)):null));
     if(hit){al.art=hit.artworkUrl100.replace(/\d+x\d+bb/,"600x600bb");return al}}catch(e){}}
   al.art=null;return al;
 }
 function cStart(){let p=mix(cPool());if(ccount)p=p.slice(0,ccount);if(!p.length)return;const ms=[...cmOn];
-  cdeck=p.map(x=>({...x,m:x.k==="ins"?"ins":ms[Math.floor(Math.random()*ms.length)],px:Math.random()*100,py:Math.random()*100}));ci=0;cscore=0;cres=[];lastMode="cov";show("cgame");cAsk()}
+  cdeck=p.map(x=>({...x,m:x.k==="ins"?"ins":x.k==="psil"?"sil":ms[Math.floor(Math.random()*ms.length)],px:Math.random()*100,py:Math.random()*100}));ci=0;cscore=0;cres=[];lastMode="cov";show("cgame");cAsk()}
 const SF=["none","grayscale(1) contrast(400%)","blur(3px) grayscale(1) contrast(3000%)","blur(7px) grayscale(1) contrast(3000%)"];
 const LV={sil:[3,2,1,0],crop:[5,3.2,2,1],blur:[30,16,7,0],pix:[6,12,24,0],ins:[1,0]};
 function cDraw(){const al=cdeck[ci],m=al.m,v=LV[m][clevel],img=$("cimg"),bg=$("cbg"),cv=$("ccv"),x=cv.getContext("2d");
@@ -946,10 +1002,10 @@ function cDraw(){const al=cdeck[ci],m=al.m,v=LV[m][clevel],img=$("cimg"),bg=$("c
   img.style.filter=m==="sil"?SF[v]:m==="blur"&&v>0?`blur(${v}px)`:"none";
   if(m==="pix"&&v>0&&img.complete&&img.naturalWidth){x.imageSmoothingEnabled=false;x.clearRect(0,0,320,320);x.drawImage(img,0,0,v,v);x.drawImage(cv,0,0,v,v,0,0,320,320)}
 }
-function cPoolAll(k){return k==="alb"?ALB.map(x=>`${x[0]} — ${x[1]}`):k==="clip"?CLIPS.map(x=>`${x[0]} — ${x[1]}`):k==="film"?FILMS.map(x=>x[1]):INS.map(x=>x[1])}
+function cPoolAll(k){return k==="psil"?[...new Set(PORT.map(x=>x[0]))]:k==="alb"?ALB.map(x=>`${x[0]} — ${x[1]}`):k==="clip"?CLIPS.map(x=>`${x[0]} — ${x[1]}`):k==="film"?FILMS.map(x=>x[1]):INS.map(x=>x[1])}
 async function cAsk(){cans=false;clevel=0;const al=cdeck[ci];
   $("ccnt").textContent=`${ci+1}/${cdeck.length}`;$("cprog").style.width=(ci/cdeck.length*100)+"%";$("cpts").textContent=`${cscore} очк.`;
-  $("cmode").textContent=al.k==="ins"?"Силуэт":CM[al.m];$("copts").innerHTML="";["cimg","cbg","ccv"].forEach(id=>$(id).style.display="none");dock();
+  $("cmode").textContent=al.k==="ins"||al.k==="psil"?"Силуэт":CM[al.m];$("copts").innerHTML="";["cimg","cbg","ccv"].forEach(id=>$(id).style.display="none");dock();
   const nx=cdeck[ci+1];if(nx&&nx.k!=="ins")artLookup(nx).then(n=>{if(n.art)new Image().src=n.art});
   if(al.k==="ins"){cDraw();$("cstat").textContent=CQ.ins}
   else{$("cstat").textContent="Загружаю картинку…";await artLookup(al);if(cdeck[ci]!==al)return;
@@ -963,7 +1019,7 @@ function cHint(){if(cans)return;const al=cdeck[ci];if(clevel<LV[al.m].length-2){
 function cPick(b){if(cans)return;cans=true;const al=cdeck[ci],ok=b.dataset.ok==="1";if(ok){cscore++;buzz(20)}else buzz([30,60,30]);
   $("copts").querySelectorAll(".opt").forEach(x=>{x.disabled=true;x.classList.add(x.dataset.ok==="1"?"ok":x===b?"bad":"dim")});
   if(!ok)cres.push(["","Мимо:",[al.ans],0]);
-  clevel=LV[al.m].length-1;cDraw();$("cstat").textContent=ok?"Точно!":"Мимо";$("cpts").textContent=`${cscore} очк.`;dock()}
+  clevel=LV[al.m].length-1;cDraw();$("cstat").textContent=(ok?"Точно! ":"Мимо. ")+(al.k==="psil"?`${al.a} — ${al.t}`:"");$("cpts").textContent=`${cscore} очк.`;dock()}
 function cNext(){ci++;ci<cdeck.length?cAsk():finish(cscore,cdeck.length,{},cres)}
 
 /* OWN IMAGES */
@@ -1266,6 +1322,7 @@ document.addEventListener("keydown",e=>{if(screen!=="aud"||e.target.tagName==="I
   if(e.key===" "){e.preventDefault();play(true)}else if(e.key==="Enter"){e.preventDefault();revealed?anext(true):reveal()}});
 $("stQ").textContent=`${Q.length} вопросов`;$("stT").textContent=`${Object.values(PL).reduce((a,p)=>a+p.t.length,0)} треков`;
 dock();
+document.body.classList.add("at-home");
 probe();
 </script>
 </body>
